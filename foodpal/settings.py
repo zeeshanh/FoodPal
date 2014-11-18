@@ -24,6 +24,10 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+if 'ONHEROKU' in os.environ:
+    DEBUG = False
+    TEMPLATE_DEBUG = False
+
 ALLOWED_HOSTS = []
 
 
@@ -66,7 +70,7 @@ DATABASES = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
-
+ 
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -74,9 +78,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_L10N = True
+ 
+USE_TZ = True  
 
-USE_TZ = True
-
+# Parse database configuration from $DATABASE_URL
+if 'ONHEROKU' in os.environ:
+    import dj_database_url
+    DATABASES['default'] =  dj_database_url.config(default='postgres://rlewjwkzrzjymp:56FrljoepJUc1_UnfKTLPKtBTb@ec2-54-197-249-212.compute-1.amazonaws.com:5432/davk6apn9t9cuj')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
