@@ -24,6 +24,10 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
+if 'ONHEROKU' in os.environ:
+    DEBUG = False
+    TEMPLATE_DEBUG = False
+
 ALLOWED_HOSTS = []
 
 
@@ -77,7 +81,12 @@ USE_L10N = True
 
 USE_TZ = True
 
+# Parse database configuration from $DATABASE_URL
+if 'ONHEROKU' in os.environ:
+    import dj_database_url
+    DATABASES['default'] =  dj_database_url.config(default='postgres://wimenjqpachrdi:onfEWp46MTthYbz6T36-KfPmP0@ec2-54-163-249-168.compute-1.amazonaws.com:5432/d9m6dtl2s4puj0')
 
+	
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
