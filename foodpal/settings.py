@@ -67,6 +67,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+    import dj_database_url
+DATABASES['default'] =  dj_database_url.config(default='postgres://rlewjwkzrzjymp:56FrljoepJUc1_UnfKTLPKtBTb@ec2-54-197-249-212.compute-1.amazonaws.com:5432/davk6apn9t9cuj')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
