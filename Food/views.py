@@ -135,7 +135,7 @@ def addNewRestaurant(request):
 	restaurant = request.GET['restaurant']
 	restaurantWebsite = request.GET['restaurantWebsite']
 	if (restaurantWebsite == "0"):
-		newR = Restaurant(name = restaurant)
+		newR = Restaurant(name = restaurant, webpage = None)
 		print 'here!'
 	else:
 		newR = Restaurant(name = restaurant, webpage = restaurantWebsite)
