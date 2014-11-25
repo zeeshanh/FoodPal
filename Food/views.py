@@ -34,8 +34,8 @@ def index(request):
 	restaurants = Restaurant.objects.all()
 	locations = Location.objects.all() 
 	orders = Order.objects.all() 
-	meals = Meal.objects.all() 
-	return render(request,'Food/index.html',{'restaurants': restaurants, 'locations' : locations, 'orders' : orders, 'meals' : meals},
+	meals = Meal.objects.filter(order = None)
+	return render(request,'Food/index.html',{'restaurants': restaurants, 'locations' : locations, 'orders' : orders, 'meals' : meals, 'openo': 0, 't': timezone.now},
 					context_instance=RequestContext(request))
 			
 			
@@ -59,21 +59,20 @@ def neworder(request):
 	restaurant= request.GET['restaurant']
 	location= request.GET['location']
 	timelimit= request.GET['timelimit']
-	print(restaurant)
-	print(location)
-	print(timelimit)
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
-	sLocation = Location.objects.filter(name = location)[0]
+	sUser = User.objects.filter(username = request.user.username)[0]
 	print sRestaurant
+	sLocation = Location.objects.filter(name = location)[0]
 	print request.user.username
 	newO = Order(timeLimit = int(timelimit),\
-				 creator = request.user.username,\
+				 creator = sUser,\
 				 location = sLocation,\
 				 restaurant = sRestaurant)
 	print 'here1'
 	print newO
-	newO.save()
-	print 'here2'
+	# newO.save()
+	# newO.people_joined.add(sUser)
+	# print 'here2'
 	return HttpResponse(1) 
 	
 def newdineout(request):
@@ -97,6 +96,62 @@ def newdineout(request):
 	newO.save()
 	print 'here2'
 	return HttpResponse(1) 
-		
+	
+def addmeal(request):
+	mealName = request.GET['mealName']
+	count = request.GET['count']
+	userM = request.GET['userM']
+	print "USER: " 
+	sUser = User.objects.filter(username = userM)[0]
+	oid = request.GET['oid']
+	order = Order.objects.filter(pk = oid)[0]
+	mealPrice = Meal.objects.filter(name = mealName)[0].price
+	print "MEAL PRICE"
+	print mealPrice
+	
+	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
+	newM.save()
+	print newM.id
+	return HttpResponse(newM.id) 
+
+	
   		
-  
+def removeMeal(request):
+	mID = request.GET['mealID']
+	Meal.objects.filter(id = mID)[0].delete()
+	return HttpResponse(1)
+
+def createNewMeal(request):
+	mealName = request.GET['mealName']
+	restaurant = request.GET['restaurant']
+	mealPrice = request.GET['mealPrice']
+	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
+
+	newM = Meal(name = mealName, price = int(mealPrice), restaurant = sRestaurant) 
+	newM.save()	
+	return HttpResponse(3) 
+	
+def addNewRestaurant(request):
+	restaurant = request.GET['restaurant']
+	restaurantWebsite = request.GET['restaurantWebsite']
+	if (restaurantWebsite == "0"):
+		newR = Restaurant(name = restaurant)
+		print 'here!'
+	else:
+		newR = Restaurant(name = restaurant, webpage = restaurantWebsite)
+		print 'here1!!!!'
+	newR.save()
+	return HttpResponse(4)
+	
+def addNewLocation(request):
+	newLocation = request.GET['newLocation']
+	newL = Location(name = newLocation)
+	newL.save()
+	return HttpResponse(5)
+
+def joinOrder(request):
+	oid = request.GET['oid']
+	sUser = User.objects.filter(username = request.user.username)[0]
+	order = Order.objects.filter(pk = oid)[0]
+	order.people_joined.add(sUser)
+	return redirect('index')

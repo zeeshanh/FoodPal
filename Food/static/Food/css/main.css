@@ -1,4 +1,53 @@
 
-#addSign {
- height: 15px;
+.addSign, .removeSign {
+ height: 12px;
+}
+
+table.fixed { table-layout:fixed; }
+table.fixed td { overflow: hidden; }
+
+.addBox {
+	width = 70px;
+
+}
+
+.removeSignDiv {
+    clear:right;
+	 float:right;
+    display: inline;
+}
+
+ .mealDiv{
+
+    display: inline;
+}
+
+#logo2, #ld2 {
+	 text-align: center;
+	 height: 120px;
+}
+
+.createMealFormBox {
+
+	margin-top: 14px;
+}
+
+#createMealButton, #cancelNewMeal {
+	 float:center;
+    clear:center;
+	margin-left: 12px;
+
+	margin-top: 14px;
+
+}
+
+.joinOrderClass, #orderArrivedD{
+    clear:right;
+	 text-align: center;
+
+}
+
+.md {
+	 text-align: center;
+
 }

@@ -1,547 +1,509 @@
 {% load staticfiles %}
-
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title> Foodpal </title>
-
-    <!-- Bootstrap Core CSS -->
-    <link href="{% static 'Food/css/bootstrap.min.css' %}" rel="stylesheet">
-
-    <!-- Custom CSS -->
-    <link href="{% static 'Food/css/logo-nav.css' %}" rel="stylesheet">
-    <link href="{% static 'Food/css/main.css' %}" rel="stylesheet">
-	
-    <!-- jQuery -->
-    <script src="{% static 'Food/js/jquery.js' %}" ></script>
-	
-    <!-- script -->
-    <script src="{% static 'Food/js/script.js' %}" ></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="{% static 'Food/js/bootstrap.min.js' %}" ></script>
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
-</head>
-    {% block content %}
-
-<body>
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#">
-                    <img id="logo" src="{% static 'Food/images/logo.png' %}" alt="">
-                </a>
-            </div>
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="#">About</a>
-                    </li>
-                    <li>
-                        <a href="#">Services</a>
-                    </li>
-                    <li>
-                        <a href="#">Contact</a>
-                    </li>
-                     <li>
-						<a  href="#" id="logoutid" id="logoutb" type="submit"  onclick="logoutuser()"  > Logout</a>
-
-                    </li>
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
-    <!-- Page Content -->
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-            </div>
-        </div>
-		
-		
-		
-		<h1> Welcome back, {{user.first_name}}.</h1>
-		<br><br><br><br>
-	<div class="row">
-		
-        <div class="col-lg-3">
-          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
-          <h3>View your Orders.</h3>
-          <p><a class="btn btn-default" href="#" role="button" id='openyourorderbutton' onclick="viewyourorder()"> Open Orders »</a></p>
-    
-		</div><!-- /.col-lg-4 -->
-		
-		<div class="col-lg-3">
-          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
-          <h3 id="orderheader"> Make a new Order. </h3>
-          <p><a class="btn btn-default" href="#" id='neworderbutton' role="button" onclick="neworderrollout()">New Order »</a></p>
-		  
-		  
-
-
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
-          <h3>Make a new Dine Out.</h3>
-          <p><a class="btn btn-default" href="#" role="button">New Dine Out »</a></p>
-        </div><!-- /.col-lg-4 -->
-        <div class="col-lg-3">
-          <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
-          <h3>View open Orders.</h3>
-          <p><a class="btn btn-default" href="#" role="button" id='openorderbutton' onclick="viewopenorders()"> Open Orders »</a></p>
-    
-		</div><!-- /.col-lg-4 -->
-
-
-        <div class="col-lg-12">
-		
-		<br>
-		<br>	
-		
-		<div class="lead">
-		  
-			<table class="table table-hover" id='ordertable'>
-					  <thead>
-						<tr>
-						  <th>Order</th>
-						  <th>Restaurant</th>
-						  <th>Creator</th>
-						  <th>Area</th>
-						  <th>Status</th>
-						</tr>
-					  </thead>
-					  <tbody>
-						
-					{% if orders %}
-					
-						{% for order in orders %}
-						<tr>	
-						  <td> 
-						  
-						  {% if order.dineIn  %} 
-						  
-							Dine Out
-							
-						  {% else %}
-							Delivery
-						  {% endif %}	
-						  </td>
-							<td>{{order.restaurant}}</td>
-							<td>{{order.location}}</td>
-							<td>{{order.creator}}</td>
-							<td> 
-								{% if order.status == -1 %}
-									Open
-								{% elif order.status == 0 %}
-									On the way
-								{% else %}
-									Arrived
-								{% endif %}	
-						  </td>
-						</tr>
-						{% endfor %}
-							
-					{% endif %}
-					
-					  </tbody>
-			</table>		  				  
-		  
-		</div>
-		 
-		
-		<div class="lead">
- 
-			<div class="form-horizontal" id="neworderform" >
-
-			<!-- Select Basic -->
-			<div class="form-group">
-			  <label class="col-md-4 control-label" >Select Restaurant</label>
-			  <div class="col-md-6">
-				<select id="restaurantselector" name="restaurantselector" class="form-control">
-				
-				{% if restaurants %}
-				
-					{% for restaurant in restaurants %}
-								
-						<option value="">{{restaurant.name}}</option>
-					
-					{% endfor %}
-					
-				{% endif %}
-				
-				</select>
-			  </div>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<title> Foodpal </title>
+		<!-- Bootstrap Core CSS -->
+		<link href="{% static 'Food/css/bootstrap.min.css' %}" rel="stylesheet">
+		<!-- Custom CSS -->
+		<link href="{% static 'Food/css/logo-nav.css' %}" rel="stylesheet">
+		<link href="{% static 'Food/css/main.css' %}" rel="stylesheet">
+		<!-- jQuery -->
+		<script src="{% static 'Food/js/jquery.js' %}" ></script>
+		<!-- script -->
+		<script src="{% static 'Food/js/script.js' %}" ></script>
+		<!-- Bootstrap Core JavaScript -->
+		<script src="{% static 'Food/js/bootstrap.min.js' %}" ></script>
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+		<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+	</head>
+	{% block content %}
+	<body>
+		<!-- Navigation -->
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			<div class="container">
+				<!-- Brand and toggle get grouped for better mobile display -->
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="#">
+					<img id="logo" src="{% static 'Food/images/logo.png' %}" alt="">
+					</a>
+				</div>
+				<!-- Collect the nav links, forms, and other content for toggling -->
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li>
+							<a href="#">About</a>
+						</li>
+						<li>
+							<a href="#">Services</a>
+						</li>
+						<li>
+							<a href="#">Contact</a>
+						</li>
+						<li>
+							<a  href="#" id="logoutid" id="logoutb" type="submit"  onclick="logoutuser()"  > Logout</a>
+						</li>
+					</ul>
+				</div>
+				<!-- /.navbar-collapse -->
 			</div>
-
-			<!-- Select Basic -->
-			<div class="form-group">
-			  <label class="col-md-4 control-label" >Select Location</label>
-			  <div class="col-md-6">
-				<select id="locationselector" name="locationselector" class="form-control">
-				
-				{% if locations %}
-				
-					{% for location in locations %}
-								
-						<option value="">{{location.name}}</option>
-					
-					{% endfor %}
-					
-				{% endif %}
-
-				</select>
-			  </div>
-			</div>			
+			<!-- /.container -->
+		</nav>
+		<!-- Page Content -->
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+				</div>
+			</div>
+			<h1> Welcome back, {{user.first_name}}.</h1>
+			<br><br><br><br>
+			<div class="row">
+				<div class="col-lg-4 md">
+					<img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
+					<h3>View open Orders.</h3>
+					<p><a class="btn btn-default" href="#" role="button" id='openAllOrders' onclick="viewAllOrders()"> Open Orders »</a></p>
+				</div>
+				<!-- /.col-lg-4 -->
+				<div class="col-lg-4 md">
+					<img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
+					<h3 id="orderheader"> Make a new Order. </h3>
+					<p><a class="btn btn-default" href="#" id='neworderbutton' role="button" onclick="neworderrollout()">New Order »</a></p>
+				</div>
+				<!-- /.col-lg-4 -->
+ 				<div class="col-lg-4 md">
+					<img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
+					<h3>Make a new Dine Out.</h3>
+					<p><a class="btn btn-default" href="#" role="button">New Dine Out »</a></p>
+				</div>
+	<!--			
+				<div class="col-lg-3">
+					<img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" style="width: 140px; height: 140px;">
+					<h3>View open Orders.</h3>
+					<p><a class="btn btn-default" href="#" role="button" id='openorderbutton' onclick="viewopenorders()"> Open Orders »</a></p>
+				</div> -->
+				<!-- /.col-lg-4 -->
+				<div class="col-lg-12">
+					<br>
+					<br>	
+					<div class="lead">
+						<table class="table table-hover" id='ordertable'>
+							<thead>
+								<tr>
+									<th>Order</th>
+									<th>Restaurant</th>
+									<th>Creator</th>
+									<th>Area</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% if orders %}
+								{% for order in orders %}
+								<tr>
+									<td> 
+										{% if order.dineIn  %} 
+										Dine Out
+										{% else %}
+										Delivery
+										{% endif %}	
+									</td>
+									<td>{{order.restaurant}}</td>
+									<td>{{order.location}}</td>
+									<td>{{order.creator}}</td>
+									<td> 
+										{% if order.status == -1 %}
+										Open
+										{% elif order.status == 0 %}
+										On the way
+										{% else %}
+										Arrived
+										{% endif %}	
+									</td>
+								</tr>
+								{% endfor %}
+								{% endif %}
+							</tbody>
+						</table>
+					</div>
+					<div class="lead">
+						<div class="form-horizontal" id="neworderform" >
+							<!-- Select Basic -->
+							<div class="form-group">
+								<label class="col-md-4 control-label" >Select Restaurant</label>
+								<div class="col-md-6">
+									<select id="restaurantselector" onclick="addNewRestaurant()" name="restaurantselector" class="form-control">
+										{% if restaurants %}
+										{% for restaurant in restaurants %}
+										<option value="">{{restaurant.name}}</option>
+										{% endfor %}
+										{% endif %}
+										<option id="restLastOption" value="">Add Restaurant</option>
+									</select>
+								</div>
+							</div>
+							
 			
-			<!-- Text input-->
-			<div class="form-group">
-			  <label class="col-md-4 control-label" >Time limit</label>  
-			  <div class="col-md-6">
-			  <input id="timelimitfield" name="timelimit" type="text" placeholder="E.g. 10 minutes" class="form-control input-md">
-				
-			  </div>
-			</div>
-
-			<!-- Button -->
-			<div class="form-group">
-			  <label class="col-md-4 control-label" for="submitorderB">Submit Order</label>
-			  <div class="col-md-4">
-				<button id="submitorderB" name="submitorderB" class="btn btn-primary" onclick="addorder()"  >Submit</button>
-			  </div>
-			</div>
-
-			</div>
-		  </div>
-
-		  
-		<div class="lead" id="myorders"> 
-		
-		
-			<table class="table table-hover" id='myorders'>
-					  <thead>
-						<tr>
-						  <th>Order</th>
-						  <th>Restaurant</th>
-						  <th>Area</th>
-						  <th>Status</th>
-						  <th>People Joined</th>
-						</tr>
-					  </thead>
-					  <tbody>
-						
-					{% if orders %}
-					
-					
-						{% for order in orders %}
-						
-						<tr>
-
-						
-						  <td> 
-						  
-						  {% if order.dineIn  %} 
-						  
-							Dine Out
-
-						  {% else %}
-						  
-							Delivery
 							
-						  {% endif %}	
-						  
-						  </td>
-						  
-							<td>{{order.restaurant}}</td>
 							
-							<td>{{order.location}}</td>
 							
-							<td> 
-								{% if order.status == -1 %}
-									Open
-								{% elif order.status == 0 %}
-									On the way
-								{% else %}
-									Arrived
-								{% endif %}	
+							
+							
+							
+							
+							
+							
+							
+							
+							
+							<!-- Select Basic -->
+							<div class="form-group">
+								<label class="col-md-4 control-label" >Select Location</label>
+								<div class="col-md-6">
+									<select id="locationselector" onclick="addNewLocation()" name="locationselector" class="form-control">
+										{% if locations %}
+										{% for location in locations %}
+										<option value="">{{location.name}}</option>
+										{% endfor %}
+										{% endif %}
+										<option id="locationLastOption" value="">Add Location</option>
+									</select>
+								</div>
+							</div>
+							<!-- Text input-->
+							<div class="form-group">
+								<label class="col-md-4 control-label" >Time limit</label>  
+								<div class="col-md-6">
+									<input id="timelimitfield" name="timelimit" type="text" placeholder="E.g. 10 minutes" class="form-control input-md">
+								</div>
+							</div>
+							<!-- Button -->
+							<div class="form-group">
+								<label class="col-md-4 control-label" for="submitorderB">Submit Order</label>
+								<div class="col-md-4">
+									<button id="submitorderB" name="submitorderB" class="btn btn-primary" onclick="addorder()"  >Submit</button>
+								</div>
+							</div>
+						</div>
+						
+						<div class="form-horizontal"  id="addRestaurantDiv">
+							<!-- Text input-->
+							<div class="form-group">
+							  <label class="col-md-4 control-label" for="createRestaurantBox">Restaurant</label>  
+							  <div class="col-md-6">
+							  <input id="createRestaurantBox" name="createRestaurantBox" type="text" placeholder="Restaurant Name" class="form-control input-md" required="">
+							  </div>
+							</div>
+
+							<!-- Text input-->
+							<div class="form-group">
+							  <label class="col-md-4 control-label" for="createRestaurantSiteBox">Restaurant Website</label>  
+							  <div class="col-md-6">
+							  <input id="createRestaurantSiteBox" name="createRestaurantSiteBox" type="text" placeholder="http://" class="form-control input-md">
 								
-						  </td>
-							
+							  </div>
+							</div>
+
+							<!-- Button --> 
+							<div class="form-group">
+							  <label class="col-md-4 control-label" for="addNewRestaurant"></label>
+							  <div class="col-md-8">
+								<button id="addNewRestaurant" name="addNewRestaurant" onclick="createRestaurant()" class="btn btn-success">Add</button>
+								<button id="cancelAddRest" name="cancelAddRest" class="btn btn-danger">Cancel</button>
+							  </div>
+							</div>
+						</div>
+																
+						
+
+
+
+
+
+
+
+						<div class="form-horizontal"  id="addLocationDiv">
+							<!-- Text input-->
+							<div class="form-group">
+							  <label class="col-md-4 control-label" for="addLocationBox">Location</label>  
+							  <div class="col-md-6">
+							  <input id="addLocationBox" name="addLocationBox" type="text" placeholder="Location" class="form-control input-md" required="">
+							  </div>
+							</div>
+
+
+							<!-- Button --> 
+							<div class="form-group">
+							  <label class="col-md-4 control-label" for="addNewLocation"></label>
+							  <div class="col-md-8">
+								<button id="addNewLocation" name="addNewLocation" onclick="addLocation()" class="btn btn-success">Add</button>
+								<button id="cancelAddLocation" name="cancelAddLocation" class="btn btn-danger">Cancel</button>
+							  </div>
+							</div>
+						</div>						
 						
 						
 						
 						
 						
-					<!-- People Joined table, Person Meals and Total Price -->
-							<td>
+					</div>
+					<div class="lead" id="myorders">
+						<table class="table table-hover" id='myorders'>
+							<thead>
+								<tr>
+									<th>Order</th>
+									<th>Restaurant</th>
+									<th>Area</th>
+									<th>Status</th>
+									<th>People Joined</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% if orders %}
+								{% for order in orders %}
+								<tr>
+									<td> 
+										{% if order.dineIn  %} 
+										Dine Out
+										{% else %}
+										Delivery
+										{% endif %}	
+									</td>
+									<td>{{order.restaurant}}</td>
+									<td>{{order.location}}</td>
+									<td> 
+										{% if order.status == -1 %}
+										<div class="timerDivs">
+										{{order.date_created | timesince }}, {{order.timeLimit}}
+										</div> 
+										<div>
+										</div>
+<!-- 										 {{order.date_created |date:"g:i a"}}, {{order.timeLimit}}
+ -->										{% elif order.status == 0 %}
+										On the way
+										{% else %}
+										Arrived
+										{% endif %}	
+									</td>
+									<!-- People Joined table, Person Meals and Total Price -->
+									<td>
+										<table class="table table-hover" id='peoplesorders'>
+											<thead>
+												<tr>
+													<th width="25%">Person</th>
+													<th>Meals</th>
+													<th width="20%">Total Price</th>
+												</tr>
+											</thead>
+											<tbody>
+												{% if order.people_joined.all %}
+												{% for person_joined in order.people_joined.all %}
+												<tr>
+													<td> 
+														{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
+														Me (Owner)
+														{% elif person_joined.username == order.creator.username %}
+														{{person_joined.first_name}} {{person_joined.last_name}} (Owner)
+														{% else %}
+														{{person_joined.first_name}} {{person_joined.last_name}}
+														{% endif %}
+													</td>
+													<td>
+														<table class="table table-hover" id='mealsperperson' class="fixed">
+															<thead>
+																<tr>
+																	<th  width="200px" 			 >Title</th>
+																	<th align="center" width="70px">Count</th>
+																	<th align="center" width="70px">Price</th>
+																</tr>
+															</thead>
+															<tbody>
+																{% if orders %}
+																{% if order.people_joined.all %}
+																{% for meal in order.meal_set.all %}
+																{% if meal.owner.username == person_joined.username %}
+																<tr>
+																	<td onmouseover="addRemove(this, 0)" onmouseout="addRemove(this, 1)">
+																		<div class="mealDiv">
+																			{{meal.name}}
+																		</div>
+																		<div class="removeSignDiv">
+																			{% if meal.owner.username == user.username %}
+																			<img onclick= "removeMeal(this, {{meal.id}})" class="removeSign" src="{% static 'Food/images/remove.png' %}" alt=""  > 
+																			{% endif %}
+																		</div>
+																	</td>
+																	<td align="center">
+																		{{meal.count}}
+																	</td>
+																	<td align="center">
+																		<script> document.write({{meal.price}}* {{meal.count}})	</script>
+																	</td>
+																</tr>
+																{% endif %}
+																{% endfor %}
+																{% if user.username == person_joined.username %}
+																<tr id="newMealRow">
+																	<td>
+																		<div> <em> New Meal </em> </div>
+																		<!-- <div class="col-md-10">
+																			<input id="newMealBox" name="" type="text" placeholder="Enter meal" class="form-control input-md addBox">  
+																			</div>  -->
+																		<div class="addBox">
+																			<select onclick= "createMeal(this)" id="mealselecter" name="mealselecter" class="form-control">
+																				{% if meals %}
+																				{% for meal in meals %}
+																					{% if meal.restaurant.name == order.restaurant.name %}
+																					<option value="">{{meal.name}}, {{meal.price}} QAR</option>
+																					{% endif %}
+																				{% endfor %}
+																				{% endif %}
+																				<option id="lastOption" value="">Create Meal</option>
+																			</select>
+																		</div>
+																	</td>
+																	<td>
+																		<div  class="countBox">
+																			<select id="mealcountselecter" name="mealcountselecter" class="form-control">
+																				<option value=""> 1 </option>
+																				<option value=""> 2 </option>
+																				<option value=""> 3 </option>
+																				<option value=""> 4 </option>
+																				<option value=""> 5 </option>
+																				<option value=""> 6 </option>
+																				<option value=""> 7 </option>
+																				<option value=""> 8 </option>
+																				<option value=""> 9 </option>
+																			</select>
+																		</div>
+																	</td>
+																	<td id="addField" onclick="newMeal(this)">
+																		<div  align="center">	
+																			<img class="addSign" src="{% static 'Food/images/add.png' %}" alt=""  > 
+																		</div>
+																		<div class="col-md-4  singleAdd"  >
+																			<button onclick="addMeal(this, '{{person_joined}}', {{order.id}})"  name="singlebutton" class="btn btn-success">Add</button>
+																		</div>
+																	</td>
+																</tr>
+																<tr>
+																	<td colspan="3">
+																		<fieldset>
+																			<div  id="createMealForm" class="createMealFormClass">
+																				<!-- Text input-->
+																				<div class="form-group createMealFormBox">
+																					<div class="col-md-10">
+																						<input id="createMealName" type="text" placeholder="Meal Name" class="form-control input-md">
+																					</div>
+																				</div>
+																				<!-- Text input-->
+																				<div class="form-group">
+																					<div class="col-md-10">
+																						<input id="createMealPrice" type="text" placeholder="Price" class="form-control input-md  createMealFormBox">
+																					</div>
+																				</div>
+																				<!-- Button -->
+																				<div class="form-group">
+																					<div class="col-md-14">
+																						<button onclick="createMealButtonF(this, '{{order.restaurant}}')" id="createMealButton"  class="btn btn-success createMealFormBox">Create</button>
+																						<button onclick="cancelNewMealF()" id="cancelNewMeal" class="btn btn-danger">Cancel</button>
+																					</div> 
+																				</div>
+																			</div>
+																		</fieldset>
+																	</td>
+																</tr>
+																{% endif %}
+																{% endif %}
+																{% endif %}
+															</tbody>
+														</table>
+													</td>
+													<td>
+														<script> total = 0;</script>
+														{% if order.people_joined.all %}
+														{% for meal in order.meal_set.all %}
+														{% if meal.owner.username == person_joined.username %}		
+														<script>
+															total += {{meal.price}}*{{meal.count}}
+														</script>
+														{% endif %}
+														{% endfor %}
+														{% endif %}
+														<h2 align="center">
+															<script> document.write(total)	</script>
+														</h2>
+													</td>
+												</tr>
+
+												
+												{% endfor %}
+
+												{% if user.order_set.all.count  == 0 %}
+												<tr>
+												<td colspan="5" class="joinOrderClass">
+													<div class="form-group">
+													  <div class="col-md-14">
+														<button id="joinButton" onclick="joinOrder('{{order.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
+													  </div>
+													</div>								
+												</td>									
+												</tr>
+												{% endif %}
+																				
+												{% if user.username  == order.creator.username %}
+												<tr>
+												<td colspan="5" id="orderArrivedD">
+													<div class="form-group">
+													  <div class="col-md-14">
+														<button id="orderArrivedB" onclick="orderArrived('{{order.id}}')" class="btn btn-info">Order Arrived</button>
+													  </div>
+													</div>								
+												</td>									
+												</tr>
+												{% endif %}
+																				
+														
+												
+												
+												{% endif %}
+											</tbody>
+										</table>
+									</td>
+								</tr>
 							
-							
-							
-							
-				<table class="table table-hover" id='peoplesorders'>
-					  <thead>
-						<tr>
-						  <th>Person</th>
-						  <th>Meals</th>
-						  <th>Total Price</th>
-						</tr>
-					  </thead>
-					  <tbody>
-											
-							
-							{% if order.people_joined.all %}
-						
-						
+								<tr><td colspan="7"></td></tr>
+								{% endfor %}
+								{% endif %}
 
-						
-									{% for person_joined in order.people_joined.all %}
-						
-						<tr>	
-						
-						  <td> 
-						  
-							{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
-								Me (Owner)
-								
-							{% elif person_joined.username == order.creator.username %}
-								{{person_joined.first_name}} {{person_joined.last_name}} (Owner)
-							{% else %}
-								{{person_joined.first_name}} {{person_joined.last_name}}
-							{% endif %}
-						  
-						  </td>
-						  
-						  
-							<td>
-	
-							
-
-
-
-			<table class="table table-hover" id='mealsperperson'>
-					  <thead>
-						<tr>
-						  <th>Title</th>
-						  <th>Count</th>
-						  <th>Price</th>
-						</tr>
-					  </thead>
-					  <tbody>
-						
-					{% if orders %}
-					
-						{% if order.people_joined.all %}
-
-						
-						{% for meal in order.meal_set.all %}
-						
-						
-						{% if meal.owner.username == person_joined.username %}
-
-						<tr>	
-
-						
-						  <td> 
-					  
-						  {{meal.name}}
-
-			  
-						  </td>
-						  
-							<td>
-	
-						  {{meal.count}}
-							
-							
-							</td>
-							
-							
-							
-							
-							<td>
-						  {{meal.price}}
-							</td>
-
-						  
-						</tr>
-						
-						{% endif %}
-
-
-
-
-
-
-
-
-
-
-
-
-						
-						{% endfor %}
-						
-						<tr>	
-						  <td  >  New Meal
-			  <input id="newMealBox" name="" type="text" placeholder="Enter meal" class="form-control input-md">
-						  </td>
-							<td>
-							</td>
-							<td onclick="newMeal()">
-								<img id="addSign" src="{% static 'Food/images/add.png' %}" alt=""  >
-							</td>						  
-						</tr>								
-							
-						{% endif %}
-						
-					{% endif %}
-					
-					  </tbody>
-			</table>	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-							
-							
-							</td>
-							
-							
-							
-							
-							<td>
-							
-							<script>		total = 0;</script>
-						{% if order.people_joined.all %}
-
-						
-						{% for meal in order.meal_set.all %}
-						
-						
-						{% if meal.owner.username == person_joined.username %}		
-
-	
-						<script>
-							total += {{meal.price}}*{{meal.count}}
-						</script>
-						
-						{% endif %}
-							
-						{% endfor %}
-						
-						{% endif %}
-
-							<h2 align="center">
-							<script> document.write(total)	</script>
-							</h2>
-							</td>
-		
-						  
-						</tr>
-						
-						
-								
-							{% endfor %}
-							
-						
-					{% endif %}
-					
-					  </tbody>
-			</table>	
-
-
-
-
-							
-							
-							
-							
-							
-							</td>
-							
-							
-							
-							
-							
-							
-							
-							
-							
-						  
-						</tr>
-						{% endfor %}
-							
-					{% endif %}
-					
-					  </tbody>
-			</table>	
-
-
-			
-		 
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- /.col-lg-4 -->
+			</div>
 		</div>
-		
-		
-  
-		</div><!-- /.col-lg-4 -->
-   
-		
-      </div>		
-		
-    </div>
+		<!-- /.container -->
+	<br><br><br>
+	</body>
 	
-    <!-- /.container -->
 
-</body>
-
-   {% endblock %}
-
+	
+	{% endblock %}
 </html>
+
+</div>

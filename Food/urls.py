@@ -7,6 +7,12 @@ urlpatterns = patterns('',
 	url(r'^logoutv/$', views.logoutv, name='logoutv'),
 	url(r'^signup/$', views.register_user, name='signup'),
 	url(r'^neworder/$', views.neworder, name='neworder'),
+	url(r'^addmeal/$', views.addmeal, name='addmeal'),
+	url(r'^removeMeal/$', views.removeMeal, name='removeMeal'),
+	url(r'^createNewMeal/$', views.createNewMeal, name='createNewMeal'),
+	url(r'^addNewRestaurant/$', views.addNewRestaurant, name='addNewRestaurant'),
+	url(r'^addNewLocation/$', views.addNewLocation, name='addNewLocation'),
+	url(r'^joinOrder/$', views.joinOrder, name='joinOrder'),
 )
 
 # Authentication views
