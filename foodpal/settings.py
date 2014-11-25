@@ -67,8 +67,8 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-    import dj_database_url
-DATABASES['default'] =  dj_database_url.config(default='postgres://rlewjwkzrzjymp:56FrljoepJUc1_UnfKTLPKtBTb@ec2-54-197-249-212.compute-1.amazonaws.com:5432/davk6apn9t9cuj')
+    # import dj_database_url
+# DATABASES['default'] =  dj_database_url.config(default='postgres://ocpskwprokiwbr:UJUx7I2DmFZ5n-UK-vtM05AI8X@ec2-54-243-245-159.compute-1.amazonaws.com:5432/d7neegr45k0nk5')
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
@@ -84,10 +84,15 @@ USE_L10N = True
 USE_TZ = True  
 
 # Parse database configuration from $DATABASE_URL
+# Parse database configuration from $DATABASE_URL
 if 'ONHEROKU' in os.environ:
     import dj_database_url
-    DATABASES['default'] =  dj_database_url.config(default='postgres://rlewjwkzrzjymp:56FrljoepJUc1_UnfKTLPKtBTb@ec2-54-197-249-212.compute-1.amazonaws.com:5432/davk6apn9t9cuj')
+    DATABASES['default'] =   dj_database_url.config(default='postgres://ocpskwprokiwbr:UJUx7I2DmFZ5n-UK-vtM05AI8X@ec2-54-243-245-159.compute-1.amazonaws.com:5432/d7neegr45k0nk5')
 
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+ALLOWED_HOSTS = ['*']
+	
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
