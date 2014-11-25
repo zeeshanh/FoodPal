@@ -70,8 +70,8 @@ def neworder(request):
 				 restaurant = sRestaurant)
 	print 'here1'
 	print newO
-	# newO.save()
-	# newO.people_joined.add(sUser)
+	newO.save()
+	newO.people_joined.add(sUser)
 	# print 'here2'
 	return HttpResponse(1) 
 	
