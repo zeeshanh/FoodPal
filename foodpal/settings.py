@@ -25,8 +25,8 @@ ONHEROKU = True
 TEMPLATE_DEBUG = True
 
 if 'ONHEROKU' in os.environ:
-    DEBUG = False
-    TEMPLATE_DEBUG = False
+    DEBUG = True
+    TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
