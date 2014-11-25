@@ -44,11 +44,11 @@ function addorder() {
     mylocation = $("#locationselector").find(":selected").text();
     restaurant = $("#restaurantselector").find(":selected").text();
     data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit;
-    var url = "http://localhost:8000/Food"
+	var url = location.href.replace( '/#', '') + '/neworder/'
 	
     $.ajax({
         type: "GET",
-        url: url + '/neworder/',
+        url: url,
         data: data,
         success: function(data) {
 			if (data == 1)
