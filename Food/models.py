@@ -37,7 +37,7 @@ class Meal(models.Model):
 	name = models.CharField(max_length = 100)
 	price = models.IntegerField(default = 0)
 	count = models.IntegerField(default = 0)
-	restaurant = models.ForeignKey(Restaurant)
+	restaurant = models.ForeignKey(Restaurant, unique=False)
 	order = models.ForeignKey(Order, null=True)
 	owner = models.ForeignKey(User, null=True)
 	def __unicode__(self):

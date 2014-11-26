@@ -2,6 +2,20 @@ function logoutuser() {
     location.href = "logoutv/"
 }
 
+function orderArrived(){
+    url = 
+    $.ajax({
+        type: "GET",
+        url: url,
+        data: data,
+        success: function(data) {
+            if (data == 1)
+                // location.href = location.href
+                window.location.reload();
+        }
+    });
+}
+
 function neworderrollout() {
     if ($("#openAllOrders").html() == "Close Orders »") {
 		// alert('ads');
