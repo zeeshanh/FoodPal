@@ -21,12 +21,12 @@ class Location(models.Model):
 class Order(models.Model):
 	date_created = models.DateTimeField(default=timezone.now)
 	timeLimit = models.IntegerField()
-	restaurant = models.ForeignKey(Restaurant)
+	restaurant = models.ForeignKey(Restaurant, unique = False)
 	creator = models.ForeignKey(User,  related_name = "ordercreator") 
 	peopleLimit = models.IntegerField(default = 0)
 	dineIn = models.BooleanField(default = False)
 	status = models.IntegerField(default = -1)
-	location = models.OneToOneField(Location) 
+	location = models.ForeignKey(Location, unique = False) 
 	people_joined = models.ManyToManyField(User, null=True) 
 	def __unicode__(self):
 		return unicode(self.creator) + " from " + unicode(self.restaurant)
@@ -38,7 +38,7 @@ class Meal(models.Model):
 	price = models.IntegerField(default = 0)
 	count = models.IntegerField(default = 0)
 	restaurant = models.ForeignKey(Restaurant, unique=False)
-	order = models.ForeignKey(Order, null=True)
-	owner = models.ForeignKey(User, null=True)
+	order = models.ForeignKey(Order, null=True,unique = False)
+	owner = models.ForeignKey(User, null=True, unique = False)
 	def __unicode__(self):
 		return self.name

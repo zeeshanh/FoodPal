@@ -2,19 +2,37 @@ function logoutuser() {
     location.href = "logoutv/"
 }
 
-function orderArrived(){
-    url = 
+function hasOrderArrived(){
+    console.log("function start");
     $.ajax({
         type: "GET",
-        url: url,
-        data: data,
+        url: "/Food/hasOrderArrived",
         success: function(data) {
-            if (data == 1)
-                // location.href = location.href
-                window.location.reload();
+            //console.log(data);
+            if (data == 1){
+                $(".alerts").html("<div class='alert-message success'><a class='close' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
+                console.log("Done");
+                var tone = document.getElementById("tone"); 
+                tone.play();
+
+            }
         }
     });
 }
+
+function orderArrived(){
+    console.log("pressed arrived");
+    $.ajax({
+        type: "GET",
+        url: "/Food/orderArrived",
+        success: function(data) {
+            if (data == 1){
+                console.log("Done");
+            }
+        }
+    });
+}
+
 
 function neworderrollout() {
     if ($("#openAllOrders").html() == "Close Orders »") {
@@ -143,6 +161,8 @@ $(document).ready(function() {
 	{	
 		setTimer(i)
 	}
+
+    setInterval(hasOrderArrived, 30000);
 })
 
 // function viewopenorders() {
@@ -397,17 +417,4 @@ function joinOrder(oid) {
 	location.href = location.href.replace( '/#', '') + "/?oid=" + oid
 	// viewyourorder();
 }	
-	
-
-
-
-	
-function orderArrived(oid) {
-
-}
-	
-	
-	
-	
-	
 	

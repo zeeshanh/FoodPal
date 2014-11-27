@@ -28,6 +28,9 @@
 	</head>
 	{% block content %}
 	<body>
+		 <audio id = "tone"><source src="{% static 'Food/sounds/tone.mp3' %}"></source>
+		<p>If you are reading this, it is because your browser does not support the audio element. </p>
+		</audio>
 		<!-- Navigation -->
 		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
 			<div class="container">
@@ -64,6 +67,7 @@
 			</div>
 			<!-- /.container -->
 		</nav>
+		<div class = "alerts"></div>
 		<!-- Page Content -->
 		<div class="container">
 			<div class="row">

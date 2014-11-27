@@ -13,6 +13,8 @@ urlpatterns = patterns('',
 	url(r'^addNewRestaurant/$', views.addNewRestaurant, name='addNewRestaurant'),
 	url(r'^addNewLocation/$', views.addNewLocation, name='addNewLocation'),
 	url(r'^joinOrder/$', views.joinOrder, name='joinOrder'),
+	url(r'^hasOrderArrived/$', views.hasOrderArrived, name='hasOrderArrived'),
+	url(r'^orderArrived/$', views.orderArrived, name='orderArrived'),
 )
 
 # Authentication views

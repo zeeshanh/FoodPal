@@ -155,3 +155,18 @@ def joinOrder(request):
 	order = Order.objects.filter(pk = oid)[0]
 	order.people_joined.add(sUser)
 	return redirect('index')
+
+def hasOrderArrived(request):
+    sUser = User.objects.filter(username = request.user.username)[0]
+    orders = Order.objects.filter(people_joined = sUser, status =1 )
+    return HttpResponse(1)
+    if len(orders) == 0:
+    	return HttpResponse(-1);
+    else:
+    	return HttpResponse(orders[0].pk)
+
+def orderArrived(request):
+	sUser = User.objects.filter(username = request.user.username)[0]
+	orders = Order.objects.filter(people_joined = sUser)
+	orders[0].status=1;
+	return HttpResponse(1)
