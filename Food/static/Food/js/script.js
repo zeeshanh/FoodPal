@@ -454,7 +454,8 @@ function setTimer(i) {
 		// alert($(".timerDivs").eq(i).closest("#newMealRow").length)
 		
 		
-		
+		if (document.getElementById("deleteOrderDiv") != null)
+			document.getElementById("deleteOrderDiv").style.display = "none";
 		// if ($('.timerDivs :has(#newMealRow)').length > 0)
 			// alert("ASD");
 		var a = $('#newMealRow').parent().parent().parent().parent().parent().parent().parent().prev().first().children().first().html()

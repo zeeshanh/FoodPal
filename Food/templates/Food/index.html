@@ -66,8 +66,8 @@
 				<!-- /.navbar-collapse -->
 			</div>
 			<!-- /.container -->
-			<div class = "alerts"></div>
 		</nav>
+		<div class = "alerts"></div>
 		<!-- Page Content -->
 		<div class="container">
 			<div class="row">
@@ -326,7 +326,6 @@
 													<td> 
 														{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
 														Me (Owner)
-														
 														{% elif person_joined.username == order.creator.username %}
 														
 															{% if user.first_name %}
@@ -341,7 +340,7 @@
 															{% if person_joined.first_name %}
 																{{person_joined.first_name}} {{person_joined.last_name}}
 															{% else %}
-																{{ person_joined.username }} (Owner)
+																{{ person_joined.username }}
 															{% endif %}														
 														
 														{{person_joined.first_name}} {{person_joined.last_name}}
@@ -483,7 +482,7 @@
 
 												{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
 												<tr>
-												<td colspan="5" class="leaveOrderButton">
+												<td colspan="5" class="leaveOrderButton" id = "deleteOrderDiv">
 													<div class="form-group">
 													  <div class="col-md-14">
 														<button id="leaveOrderButton" onclick="deleteOrder(this,'{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
@@ -526,7 +525,7 @@
 												</tr>
 												{% endif %}
 																				
-												{% if user.username  == order.creator.username and order.status == 0 %}
+												{% if user.username  == order.creator.username %}
 												<tr>
 												<td colspan="5" id="orderArrivedD">
 													<div class="form-group">
