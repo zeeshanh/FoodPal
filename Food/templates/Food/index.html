@@ -265,6 +265,8 @@
 						
 						
 					</div>
+					
+					
 					<div class="lead" id="myorders">
 						<table class="table table-hover" id='myorders1'>
 							<thead>
@@ -291,18 +293,17 @@
 									<td>{{order.restaurant}}</td>
 									<td>{{order.location}}</td>
 									<td> 
-										{% if order.status == -1 %}
 										<div class="timerDivs">
 										{{order.date_created | timesince }}, {{order.timeLimit}}
 										</div> 
 										<div>
-										</div>
-<!-- 										 {{order.date_created |date:"g:i a"}}, {{order.timeLimit}}
- -->										{% elif order.status == 0 %}
+										{% if order.status == 0 %}
 										On the way
-										{% else %}
+										{% elif order.status == 1 %}
 										Arrived
 										{% endif %}	
+										</div>
+
 									</td>
 									<!-- People Joined table, Person Meals and Total Price -->
 									<td class="peopleJoinedTable">
@@ -381,7 +382,7 @@
 																			</select>
 																		</div>
 																	</td>
-																	<td>
+																	<td> 
 																		<div  class="countBox">
 																			<select id="mealcountselecter" name="mealcountselecter" class="form-control">
 																				<option value="">1</option>
@@ -461,7 +462,7 @@
 				
 
 
-												{%   if user.username == order.creator.username %}
+												{%   if user.username == order.creator.username and person_joined.username == user.username %}
 												<tr>
 												<td colspan="5" class="leaveOrderButton">
 													<div class="form-group">
@@ -527,16 +528,17 @@
 									</td>
 									
 									<td class="peopleJoinedShort">
-											{% if order.people_joined.all.count == 1 %}
-												
-												{% if user.username == order.creator.username %}
-													You
-												{% else %}
-													1 person
-												{% endif %}
+										{% if order.people_joined.all.count == 1 %}
+											{% if user.username == order.creator.username %}
+												You
 											{% else %}
-												{{order.people_joined.all.count}} people joined
-											{% endif %}	
+												{{order.creator.first_name}} {{order.creator.last_name}}
+											{% endif %}
+										{% elif user in order.people_joined.all %}
+											You and {{order.people_joined.all.count|add:"-1"}} other(s)
+										{% else %}
+											{{order.people_joined.all.count}} people
+										{% endif %}	
 									</td>
 									<td> 
 										  <div class="col-md-4">

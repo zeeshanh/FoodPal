@@ -142,7 +142,7 @@ def createNewMeal(request):
 	restaurant = request.GET['restaurant']
 	mealPrice = request.GET['mealPrice']
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
-	if (Meal.objects.filter(name = mealName).count() > 0):
+	if (Meal.objects.filter(name = mealName, restaurant = sRestaurant).count() > 0):
 		return HttpResponse(-1)
 	newM = Meal(name = mealName, price = int(mealPrice), restaurant = sRestaurant) 
 	newM.save()	
@@ -196,6 +196,10 @@ def hasOrderArrived(request):
 def leaveOrder(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
+	allMealsCount = Meal.objects.filter(order = order, owner = request.user).count()
+	for i in range(0, allMealsCount):
+		meal = Meal.objects.filter(order = order, owner = request.user)[i]
+		meal.delete()	
 	sUser = User.objects.filter(username = request.user.username)[0]
 	order.people_joined.remove(sUser)
 	return redirect('index')
@@ -204,7 +208,15 @@ def leaveOrder(request):
 def deleteOrder(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
-	# order.delete()
+	allMealsCount = Meal.objects.filter(order = order).count()
+	people = order.people_joined.count()
+	for i in range(0, allMealsCount):
+		meal = Meal.objects.filter(order = order)[i]
+		meal.delete()
+	for j in range(0, people):
+		person = order.people_joined.all()[j]
+		order.people_joined.remove(person)
+	order.delete()
 	return redirect('index')
 	
 		

@@ -388,8 +388,21 @@ function cancelNewMealF() {
 
 
 function setTimer(i) {
-
+    // alert($(".timerDivs").eq(i).next().html())
+    // alert($(".timerDivs").eq(i).next().html().indexOf("On the way"))
     var elems = document.getElementsByClassName('timerDivs');
+
+    if ($(".timerDivs").eq(i).next().html().indexOf("On the way") > -1) {
+		// alert('asd');
+		$(".timerDivs").eq(i).html("")
+		return;
+	};
+    // if ($(".timerDivs").eq(i).next().html().indexOf("Arrived") > -1) {
+		// alert('asd');
+		// $(".timerDivs").eq(i).html("")
+		// return;
+	// };	
+
 	// alert(elems[i].innerHTML);
 	var length = elems[i].innerHTML.split(', ').length
 	// alert(length)
@@ -411,14 +424,44 @@ function setTimer(i) {
 	function timer()
 	{
 	  count=count-1;
+
 	  if (count <= 0)
 	  {
+		// alert(elems[i].innerHTML)
 		clearInterval(counter);
 		elems[i].innerHTML = "On the way"
 		$("#orderArrivedD").show(); 
-		if (document.getElementById("newMealRow") != null)
+		// if (
+		// alert($(".timerDivs").eq(i))
+		// alert($(".timerDivs").eq(i).closest("#newMealRow").length)
+		
+		
+		
+		// if ($('.timerDivs :has(#newMealRow)').length > 0)
+			// alert("ASD");
+		var a = $('#newMealRow').parent().parent().parent().parent().parent().parent().parent().prev().first().children().first().html()
+		var b = elems[i].innerHTML
+		if (document.getElementById("newMealRow") != null && a == b)
 			document.getElementById("newMealRow").style.display = "none";		
-			
+		
+		
+		
+		
+		// AJAX CALL UPDATES STATUS	
+	   // $.ajax({
+			// type: "GET",
+			// url: "/Food/orderTimeUp/",
+			// data: "oid=" + oid,
+			// success: function(data) {
+				// if (data == -1)
+					// alert('???')
+				// else 
+					// window.location.reload();
+
+			// }
+		// });
+
+		
 		 return;
 	  }
 		var rmin = (Math.ceil(count/60)-1)
