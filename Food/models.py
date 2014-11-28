@@ -45,5 +45,5 @@ class Meal(models.Model):
 
 class Notification(models.Model):
 	user = models.ForeignKey(User, unique = False)
-	order = models.ForeignKey(Order, unique= False)
+	status = models.IntegerField(default =0)
 

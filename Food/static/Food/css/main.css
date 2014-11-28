@@ -1,4 +1,7 @@
 
+body{
+  background-image: url("Food/images/food1.jpg")
+}
 .addSign, .removeSign {
  height: 12px;
 }
