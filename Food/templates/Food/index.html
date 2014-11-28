@@ -326,6 +326,7 @@
 													<td> 
 														{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
 														Me (Owner)
+														
 														{% elif person_joined.username == order.creator.username %}
 														
 															{% if user.first_name %}
@@ -334,7 +335,15 @@
 																{{ person_joined.username }} (Owner)
 															{% endif %}														
 																
+
 														{% else %}
+														
+															{% if person_joined.first_name %}
+																{{person_joined.first_name}} {{person_joined.last_name}}
+															{% else %}
+																{{ person_joined.username }} (Owner)
+															{% endif %}														
+														
 														{{person_joined.first_name}} {{person_joined.last_name}}
 														{% endif %}
 													</td>
