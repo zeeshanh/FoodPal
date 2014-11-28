@@ -11,12 +11,17 @@ function hasOrderArrived(){
         type: "GET",
         url: "/Food/hasOrderArrived",
         success: function(data) {
-            //console.log(data);
             if (data == 1){
                 $(".alerts").html("<div class='alert-message success'><a class='close' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
                 console.log("Done");
                 var tone = document.getElementById("tone"); 
                 tone.play();
+                if (window.navigator && window.navigator.vibrate) {
+                    console.log("Vibarting");
+                    navigator.vibrate([1000, 500, 1000, 500, 2000]);
+                } else {
+                    console.log("Cant vibrate");
+                }
 
             }
         }
