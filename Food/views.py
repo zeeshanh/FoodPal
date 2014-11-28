@@ -174,9 +174,8 @@ def addNewLocation(request):
 def joinOrder(request):
 	oid = request.GET['oid']
 	sUser = User.objects.filter(username = request.user.username)[0]
-	# for (i = 0; i < Order.objects.all().count())
-	
-		# if (Order.objects.all()[i].people_joined.filter
+
+	# Already in another order or has created an order
 	if (Order.objects.filter(people_joined__username__contains = sUser.username).count() > 0):
 		return HttpResponse(-1)
 	order = Order.objects.filter(pk = oid)[0]
