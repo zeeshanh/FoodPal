@@ -190,7 +190,7 @@ def hasOrderArrived(request):
     if len(notifications) == 0:
     	return HttpResponse(-1);
     else:
-    	status = notifications[0].order.status
+    	status = notifications[0].status
     	notifications[0].delete()
     	return HttpResponse(status)
 		
@@ -210,6 +210,12 @@ def leaveOrder(request):
 def deleteOrder(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
+	order.status = -2
+	order.save()
+	people = order.people_joined.all()
+	for person in people:
+		n = Notification(user = person, status = order.status)
+		n.save()
 	allMealsCount = Meal.objects.filter(order = order).count()
 	for i in range(0, allMealsCount):
 		meal = Meal.objects.filter(order = order)[i]
@@ -227,6 +233,6 @@ def orderArrived(request):
 	order.save()
 	people = order.people_joined.all()
 	for person in people:
-		n = Notification(user = person, order = order)
+		n = Notification(user = person, status = order.status)
 		n.save()
 	return HttpResponse(1)
