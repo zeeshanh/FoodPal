@@ -218,13 +218,12 @@ def deleteOrder(request):
 		n = Notification(user = person, status = order.status)
 		n.save()
 	allMealsCount = Meal.objects.filter(order = order).count()
+	print "COunt " + str(allMealsCount)
 	people = order.people_joined.count()
 	for i in range(0, allMealsCount):
+		print i
 		meal = Meal.objects.filter(order = order)[i]
 		meal.delete()
-	for j in range(0, people):
-		person = order.people_joined.all()[j]
-		order.people_joined.remove(person)
 	order.delete()
 	return redirect('index')
 	
