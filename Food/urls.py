@@ -15,6 +15,8 @@ urlpatterns = patterns('',
 	url(r'^joinOrder/$', views.joinOrder, name='joinOrder'),
 	url(r'^hasOrderArrived/$', views.hasOrderArrived, name='hasOrderArrived'),
 	url(r'^orderArrived/$', views.orderArrived, name='orderArrived'),
+	url(r'^leaveOrder/$', views.leaveOrder, name='leaveOrder'),
+	url(r'^deleteOrder/$', views.deleteOrder, name='deleteOrder'),
 )
 
 # Authentication views

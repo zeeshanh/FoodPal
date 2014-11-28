@@ -227,7 +227,7 @@
 							  <label class="col-md-4 control-label" for="addNewRestaurant"></label>
 							  <div class="col-md-8">
 								<button id="addNewRestaurant" name="addNewRestaurant" onclick="createRestaurant()" class="btn btn-success">Add</button>
-								<button id="cancelAddRest" name="cancelAddRest" class="btn btn-danger">Cancel</button>
+								<button id="cancelAddRest" name="cancelAddRest" onclick="cancelCreateRestaurant()" class="btn btn-danger">Cancel</button>
 							  </div>
 							</div>
 						</div>
@@ -255,7 +255,7 @@
 							  <label class="col-md-4 control-label" for="addNewLocation"></label>
 							  <div class="col-md-8">
 								<button id="addNewLocation" name="addNewLocation" onclick="addLocation()" class="btn btn-success">Add</button>
-								<button id="cancelAddLocation" name="cancelAddLocation" class="btn btn-danger">Cancel</button>
+								<button id="cancelAddLocation" name="cancelAddLocation" onclick="cancelAddNewLocation()" class="btn btn-danger">Cancel</button>
 							  </div>
 							</div>
 						</div>						
@@ -266,7 +266,7 @@
 						
 					</div>
 					<div class="lead" id="myorders">
-						<table class="table table-hover" id='myorders'>
+						<table class="table table-hover" id='myorders1'>
 							<thead>
 								<tr>
 									<th>Order</th>
@@ -274,6 +274,7 @@
 									<th>Area</th>
 									<th>Status</th>
 									<th>People Joined</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
@@ -304,7 +305,7 @@
 										{% endif %}	
 									</td>
 									<!-- People Joined table, Person Meals and Total Price -->
-									<td>
+									<td class="peopleJoinedTable">
 										<table class="table table-hover" id='peoplesorders'>
 											<thead>
 												<tr>
@@ -351,10 +352,10 @@
 																			{% endif %}
 																		</div>
 																	</td>
-																	<td align="center">
+																	<td align="center" class="mealcountclass">
 																		{{meal.count}}
 																	</td>
-																	<td align="center">
+																	<td align="center" class="mealtotalclass">
 																		<script> document.write({{meal.price}}* {{meal.count}})	</script>
 																	</td>
 																</tr>
@@ -383,15 +384,15 @@
 																	<td>
 																		<div  class="countBox">
 																			<select id="mealcountselecter" name="mealcountselecter" class="form-control">
-																				<option value=""> 1 </option>
-																				<option value=""> 2 </option>
-																				<option value=""> 3 </option>
-																				<option value=""> 4 </option>
-																				<option value=""> 5 </option>
-																				<option value=""> 6 </option>
-																				<option value=""> 7 </option>
-																				<option value=""> 8 </option>
-																				<option value=""> 9 </option>
+																				<option value="">1</option>
+																				<option value="">2</option>
+																				<option value="">3</option>
+																				<option value="">4</option>
+																				<option value="">5</option>
+																				<option value="">6</option>
+																				<option value="">7</option>
+																				<option value="">8</option>
+																				<option value="">9</option>
 																			</select>
 																		</div>
 																	</td>
@@ -431,6 +432,7 @@
 																		</fieldset>
 																	</td>
 																</tr>
+	
 																{% endif %}
 																{% endif %}
 																{% endif %}
@@ -452,10 +454,45 @@
 															<script> document.write(total)	</script>
 														</h2>
 													</td>
+													
+													
 												</tr>
+					
+				
+
+
+												{%   if user.username == order.creator.username %}
+												<tr>
+												<td colspan="5" class="leaveOrderButton">
+													<div class="form-group">
+													  <div class="col-md-14">
+														<button id="leaveOrderButton" onclick="deleteOrder('{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
+													  </div>
+													</div>								
+												</td>									
+												</tr>	
+			
+												{%  elif user.username  == person_joined.username and order.status == -1 %}
+												
+											
+												<tr>
+												<td colspan="5" class="leaveOrderButton">
+													<div class="form-group">
+													  <div class="col-md-14">
+														<button id="leaveOrderButton" onclick="leaveOrder('{{order.id}}')" name="leaveOrderButton" class="btn btn-warning">Leave Order</button>
+													  </div>
+													</div>								
+												</td>									
+												</tr>												
+												{% endif %}
+
 
 												
-												{% endfor %}
+												
+												
+												
+												
+											{% endfor %}
 
 												{% if user.order_set.all.count  == 0 %}
 												<tr>
@@ -469,7 +506,7 @@
 												</tr>
 												{% endif %}
 																				
-												{% if user.username  == order.creator.username %}
+												{% if user.username  == order.creator.username and order.status == 0 %}
 												<tr>
 												<td colspan="5" id="orderArrivedD">
 													<div class="form-group">
@@ -487,6 +524,24 @@
 												{% endif %}
 											</tbody>
 										</table>
+									</td>
+									
+									<td class="peopleJoinedShort">
+											{% if order.people_joined.all.count == 1 %}
+												
+												{% if user.username == order.creator.username %}
+													You
+												{% else %}
+													1 person
+												{% endif %}
+											{% else %}
+												{{order.people_joined.all.count}} people joined
+											{% endif %}	
+									</td>
+									<td> 
+										  <div class="col-md-4">
+											<button id="detailsButton" name="detailsButton" class="btn btn-primary" onclick="showDetails(this)">Show Details</button>
+										  </div>
 									</td>
 								</tr>
 							

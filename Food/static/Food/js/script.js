@@ -1,3 +1,6 @@
+var isSomethingVisible;
+var openForm;
+
 function logoutuser() {
     location.href = "logoutv/"
 }
@@ -51,11 +54,15 @@ function neworderrollout() {
         $("#neworderbutton").html("Cancel Order »")
         $("#neworderform").fadeIn("fast")
     }
+	$("#addLocationDiv").hide();
+	$("#addRestaurantDiv").hide();
 
 }
 
 
 function viewAllOrders() {
+	$("#addLocationDiv").hide();
+	$("#addRestaurantDiv").hide();
     if ($("#neworderbutton").html() == "Cancel Order »") {
         $("#neworderbutton").html("New Order »")
         $("#neworderform").hide()
@@ -68,6 +75,7 @@ function viewAllOrders() {
         $("#openAllOrders").html("Close Orders »")
         $("#myorders").fadeIn("fast")
     }
+	
 }
 
 
@@ -83,20 +91,49 @@ function addorder() {
         url: url,
         data: data,
         success: function(data) {
-			if (data == 1)
-				// location.href = location.href
+			if (data == 1) 
 				window.location.reload();
-
+			else if (data == -1)
+				alert("You already have an open order.")
+			else if (data.indexOf("9") == 0) 
+				alert("You're already in " + data.substring(1,data.length) + "'s order.")
+			else
+				alert(data + " has the same order details! Join that order.")
+		}
 
             // alert(data);
 			// $("#neworderbutton").html("New Order »")
 			// $("#neworderform").hide()
 			// $("#openAllOrders").html("Open Orders »")
 			// $("#myorders").fadeIn("fast")
-        }
+        
     });
 	
 	
+}
+
+function leaveOrder(oid) {
+    $.ajax({
+        type: "GET",
+        url: "/Food/leaveOrder/",
+        data: "oid=" + oid,
+        success: function(data) {
+			window.location.reload();
+		}  
+    });
+
+}
+
+function deleteOrder(oid) {
+    $.ajax({
+        type: "GET",
+        url: "/Food/deleteOrder/",
+        data: "oid=" + oid,
+        success: function(data) {
+			window.location.reload();
+		}  
+    });
+
 }
 
 
@@ -112,11 +149,14 @@ $(document).ready(function() {
     document.getElementById("addRestaurantDiv").style.display = "none";
     document.getElementById("addLocationDiv").style.display = "none";
     var elems = document.getElementsByClassName('singleAdd');
+    // var peopleJoinedShortDivs = document.getElementsByClassName('peopleJoinedShort');
+	// for (var j = 0; j < peopleJoinedShortDivs.length; j++)
+        // peopleJoinedShortDivs[j].style.display = "none";
     var addBoxes = document.getElementsByClassName('addBox');
     var countBoxes = document.getElementsByClassName('countBox');
     var removeSignDivs = document.getElementsByClassName('removeSignDiv');
 	// if (document.getElementById("SRO").innerHTML.length > 5) 
-		// viewyourorder()
+		// viewyourorder()  peopleJoinedShort
     for (var i = 0; i < elems.length; i++) {
         elems[i].style.display = "none";
         addBoxes[i].style.display = "none";
@@ -163,8 +203,23 @@ $(document).ready(function() {
 	}
 
     setInterval(hasOrderArrived, 30000);
+	
+	 $('.myorders1 th:nth-child(' + 5 + '), #myorders1 td:nth-child(' + 5 + ')').hide();
+	
 })
 
+function showDetails(v) {
+	if 	(jQuery(v).html() == "Show Details") {
+		jQuery(v).parent().parent().prev().hide()
+		jQuery(v).html("Hide Details")
+		jQuery(v).parent().parent().prev().prev().fadeIn("fast");
+
+	} else {
+		jQuery(v).parent().parent().prev().fadeIn("fast");
+		jQuery(v).html("Show Details")
+		jQuery(v).parent().parent().prev().prev().hide();
+	}
+}
 // function viewopenorders() {
     // if ($("#neworderbutton").html() == "Cancel Order »") {
 	
@@ -216,24 +271,50 @@ function addMeal(v, pj, oid) {
         url: url + '/addmeal/',
         data: "mealName=" + mealName + "&count=" + count + "&userM=" + user + "&oid=" + oid,
         success: function(data) {
-            var aHtml = '<tr><td onmouseover="addRemove(this, 0)" onmouseout="addRemove(this, 1)"> <div class="mealDiv">'
-            aHtml += mealName + '</div><div class="removeSignDiv" style="display: none;">'
-            aHtml += '<img onclick= "removeMeal(this, ' + data + ')" class="removeSign" src="/static/Food/images/remove.png" alt=""  > '
-            aHtml += '</div></td><td align="center">' + count + '</td><td align="center">' + (price * count) + '</td></tr>'
-            $("#newMealRow").before(aHtml)
-            jQuery(v).parent().parent().parent().parent().parent().parent().next().children().last().html(newTotal)
+			available = true;
+			// For each row
+			jQuery(v).parent().parent().parent().parent().children().each(function () { 
+				if (this.id != "newMealRow") {
+					if (jQuery(this).children().first().children().first().html().indexOf(mealName) > -1)  {
+						available = false;
+						var newCount = parseInt(jQuery(this).children().first().next().html()) + parseInt(count)
+						jQuery(this).children().first().next().html(newCount)
+						if (jQuery(this).children().first().next().next().html().indexOf('>') > -1)
+							oldPrice = parseInt(jQuery(this).children().first().next().next().html().split('>')[2])
+						else 
+							oldPrice = parseInt(jQuery(this).children().first().next().next().html())
+						var newPrice = oldPrice + (parseInt(price) * parseInt(count))
+						jQuery(this).children().first().next().next().html(newPrice)
+						jQuery(v).parent().parent().parent().parent().parent().parent().next().children().last().html(newTotal)
+						$("#newMealRow").children().eq(0).children().eq(1).hide()
+						$("#newMealRow").children().eq(0).children().eq(0).show()
+						$("#newMealRow").children().eq(1).children().eq(0).hide()
+						$("#newMealRow").children().eq(2).children().eq(1).hide()
+						$("#newMealRow").children().eq(2).children().eq(0).show()
+					}
+				}
+			});
+			
+			if (available) {
+				var aHtml = '<tr><td onmouseover="addRemove(this, 0)" onmouseout="addRemove(this, 1)"> <div class="mealDiv">'
+				aHtml += mealName + '</div><div class="removeSignDiv" style="display: none;">'
+				aHtml += '<img onclick= "removeMeal(this, ' + data + ')" class="removeSign" src="/static/Food/images/remove.png" alt=""  > '
+				aHtml += '</div></td><td align="center">' + count + '</td><td align="center">' + (price * count) + '</td></tr>'
+				$("#newMealRow").before(aHtml)
+				jQuery(v).parent().parent().parent().parent().parent().parent().next().children().last().html(newTotal)
 
-            $("#newMealRow").children().eq(0).children().eq(1).hide()
-            $("#newMealRow").children().eq(0).children().eq(0).show()
+				$("#newMealRow").children().eq(0).children().eq(1).hide()
+				$("#newMealRow").children().eq(0).children().eq(0).show()
 
-            $("#newMealRow").children().eq(1).children().eq(0).hide()
+				$("#newMealRow").children().eq(1).children().eq(0).hide()
 
-            $("#newMealRow").children().eq(2).children().eq(1).hide()
-            $("#newMealRow").children().eq(2).children().eq(0).show()
-
+				$("#newMealRow").children().eq(2).children().eq(1).hide()
+				$("#newMealRow").children().eq(2).children().eq(0).show()
+			}
         }
     });
 }
+
 
 function addRemove(t, a) {
     if (a == 0)
@@ -268,24 +349,26 @@ function createMeal(t) {
 function createMealButtonF(t, restaurant) {
     mealName = $("#createMealName").val();
     mealPrice = $("#createMealPrice").val();
-
+	// alert(mealName);
+	// alert(mealPrice);
     var url = location.href.replace( '/#', '')
     $.ajax({
         type: "GET",
         url: url + '/createNewMeal/',
         data: "mealName=" + mealName + "&mealPrice=" + mealPrice + "&restaurant=" + restaurant,
         success: function(data) {
+			if (data == 3) {
+				var aHtml = '<option value="">' + mealName + ', ' + mealPrice + ' QAR</option>'
+				$("#lastOption").before(aHtml)
 
+				$("#createMealForm").fadeOut("fast", function() {
+					$("#newMealRow").show();
+					$('#mealselecter option:selected').prev().attr('selected', 'selected');
 
-            var aHtml = '<option value="">' + mealName + ', ' + mealPrice + ' QAR</option>'
-            $("#lastOption").before(aHtml)
-
-            $("#createMealForm").fadeOut("fast", function() {
-                $("#newMealRow").show();
-                $('#mealselecter option:selected').prev().attr('selected', 'selected');
-
-            })
-
+				})
+			} else {
+				alert("Meal already available");
+			}
         }
     });
 }
@@ -302,13 +385,22 @@ function cancelNewMealF() {
 function setTimer(i) {
 
     var elems = document.getElementsByClassName('timerDivs');
-	
+	// alert(elems[i].innerHTML);
+	var length = elems[i].innerHTML.split(', ').length
+	// alert(length)
 	orderTime = parseInt(elems[i].innerHTML.split(', ')[elems[i].innerHTML.split(', ').length-1])
-	timeElapsed = parseInt(elems[i].innerHTML.split('&')[0])
-	// alert(orderTime)
-	// alert(timeElapsed)
+	if (length == 2)
+		timeElapsed = parseInt(elems[i].innerHTML.split('&')[0])
+	else {
+		hours = (parseInt(elems[i].innerHTML.split('&')[0]))
+		min = (parseInt(elems[i].innerHTML.split('&')[1].split(',')[1]))
+		timeElapsed = (hours*60)+min
+	}
+	// alert("OT: " + orderTime)
+	// alert("TE: " + timeElapsed)
+	// alert()
 	// alert(ff)
-
+	// alert(orderTime-timeElapsed)
 	var count=(orderTime-timeElapsed)*60;
 	var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
 	function timer()
@@ -319,20 +411,25 @@ function setTimer(i) {
 		clearInterval(counter);
 		elems[i].innerHTML = "On the way"
 		$("#orderArrivedD").show(); 
+		if (document.getElementById("newMealRow") != null)
+			document.getElementById("newMealRow").style.display = "none";		
+			
 		 return;
 	  }
 		var rmin = (Math.ceil(count/60)-1)
 		var rsec = count % 60
+		// alert((rsec+"").length) 
+		if ((rsec+"").length == 1)
+			rsec = "0"+rsec
+		if (rsec == 0) rmin += 1;
 		var ts = "Open for " + rmin + ":" + rsec
-		if (ts.length != 13) {
-			var ts = "Open for " + rmin + ":0" + rsec
-		}
 		elems[i].innerHTML = ts // watch for spelling
 	}
 	timer();
 	
 }
 
+// $("#myorders1 > thead th:nth-child(0)").hide();
 
 function addNewRestaurant() {
     if ($("#restaurantselector").find(":selected").text() == "Add Restaurant") {
@@ -358,15 +455,26 @@ function createRestaurant() {
         url: url + '/addNewRestaurant/',
         data: data,
         success: function(data) {
-            var aHtml = '<option value="">' + restaurant + '</option>'
-            $("#restLastOption").before(aHtml)
-			$('#restaurantselector option:selected').prev().attr('selected', 'selected');
-			
-			$("#addRestaurantDiv").fadeOut("fast", function() {
-            $("#neworderform").show(); 
-        })			
+			if (data == 4) {
+				var aHtml = '<option value="">' + restaurant + '</option>'
+				$("#restLastOption").before(aHtml)
+				$('#restaurantselector option:selected').prev().attr('selected', 'selected');
+				
+				$("#addRestaurantDiv").fadeOut("fast", function() {
+				$("#neworderform").show(); 
+				})
+			} else {
+				alert("Restaurant already available");
+			}				
         }
     });	
+}
+
+function cancelCreateRestaurant() {
+	$('#restaurantselector option:selected').prev().attr('selected', 'selected');
+	$("#addRestaurantDiv").fadeOut("fast", function() {
+	$("#neworderform").show(); 
+	})
 }
 
 function addNewLocation() {
@@ -388,18 +496,28 @@ function addLocation() {
         url: url,
         data: data,
         success: function(data) {
-            var aHtml = '<option value="">' + newLocation + '</option>'
-            $("#locationLastOption").before(aHtml)
-			$('#locationselector option:selected').prev().attr('selected', 'selected');
-			
-			$("#addLocationDiv").fadeOut("fast", function() {
-            $("#neworderform").show(); 
-        })			
+			if (data == 5) {
+				var aHtml = '<option value="">' + newLocation + '</option>'
+				$("#locationLastOption").before(aHtml)
+				$('#locationselector option:selected').prev().attr('selected', 'selected');
+				
+				$("#addLocationDiv").fadeOut("fast", function() {
+				$("#neworderform").show(); 
+				})	
+			} else {
+				alert("Location already available.");
+			}
         }
     });	
-	alert
+	// alert
 }
  
+function cancelAddNewLocation() {
+	$('#locationselector option:selected').prev().attr('selected', 'selected');
+	$("#addLocationDiv").fadeOut("fast", function() {
+	$("#neworderform").show(); 
+	})		
+}
 
 function joinOrder(oid) {
 	// obj = eval('{' + meals.substring(1,meals.length-1) + '}'); 
@@ -414,7 +532,19 @@ function joinOrder(oid) {
 		// }
 		// alert("+"+myArray[i]+"+");
     // }
-	location.href = location.href.replace( '/#', '') + "/?oid=" + oid
+   $.ajax({
+        type: "GET",
+        url: "/Food/joinOrder/",
+        data: "oid=" + oid,
+        success: function(data) {
+			if (data == -1)
+				alert('???')
+			else 
+				window.location.reload();
+
+        }
+    });		
+	
 	// viewyourorder();
 }	
 	

@@ -61,8 +61,17 @@ def neworder(request):
 	timelimit= request.GET['timelimit']
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
 	sUser = User.objects.filter(username = request.user.username)[0]
-	print sRestaurant
 	sLocation = Location.objects.filter(name = location)[0]
+	if (Order.objects.filter(creator = sUser).count() > 0):
+		print "sads"
+		return HttpResponse(-1) 
+	elif (Order.objects.filter(restaurant = sRestaurant, location = sLocation).count() > 0):
+		userOpened = Order.objects.filter(restaurant = sRestaurant, location = sLocation)[0].creator.username
+		return HttpResponse(userOpened) 
+	elif (Order.objects.filter(people_joined__username__contains = sUser.username).count() > 0):
+		userOpened = Order.objects.filter(people_joined__username__contains = sUser.username)[0].creator.username
+		return HttpResponse("9" + userOpened) 
+	print sRestaurant
 	print request.user.username
 	newO = Order(timeLimit = int(timelimit),\
 				 creator = sUser,\
@@ -105,10 +114,17 @@ def addmeal(request):
 	sUser = User.objects.filter(username = userM)[0]
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
+	if ((Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser).count()) > 0):
+		print "ALREADY HERE\n"
+		meal = Meal.objects.filter(name = mealName, count__gte = 1)[0]
+		meal.count = meal.count + int(count);
+		print "NEW COUNT" 
+		print meal.count
+		meal.save()
+		return HttpResponse(Meal.objects.filter(name = mealName, count__gte = 1)[0].id) 
 	mealPrice = Meal.objects.filter(name = mealName)[0].price
 	print "MEAL PRICE"
 	print mealPrice
-	
 	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
 	newM.save()
 	print newM.id
@@ -126,7 +142,8 @@ def createNewMeal(request):
 	restaurant = request.GET['restaurant']
 	mealPrice = request.GET['mealPrice']
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
-
+	if (Meal.objects.filter(name = mealName).count() > 0):
+		return HttpResponse(-1)
 	newM = Meal(name = mealName, price = int(mealPrice), restaurant = sRestaurant) 
 	newM.save()	
 	return HttpResponse(3) 
@@ -134,17 +151,21 @@ def createNewMeal(request):
 def addNewRestaurant(request):
 	restaurant = request.GET['restaurant']
 	restaurantWebsite = request.GET['restaurantWebsite']
+	if (Restaurant.objects.filter(name = restaurant).count() > 0):
+		return HttpResponse(-1)
+
 	if (restaurantWebsite == "0"):
 		newR = Restaurant(name = restaurant, webpage = None)
-		print 'here!'
 	else:
 		newR = Restaurant(name = restaurant, webpage = restaurantWebsite)
-		print 'here1!!!!'
 	newR.save()
 	return HttpResponse(4)
 	
 def addNewLocation(request):
 	newLocation = request.GET['newLocation']
+	if (Location.objects.filter(name = newLocation).count() > 0):
+		return HttpResponse(-1)
+	
 	newL = Location(name = newLocation)
 	newL.save()
 	return HttpResponse(5)
@@ -152,7 +173,13 @@ def addNewLocation(request):
 def joinOrder(request):
 	oid = request.GET['oid']
 	sUser = User.objects.filter(username = request.user.username)[0]
+	# for (i = 0; i < Order.objects.all().count())
+	
+		# if (Order.objects.all()[i].people_joined.filter
+	if (Order.objects.filter(people_joined__username__contains = sUser.username).count() > 0):
+		return HttpResponse(-1)
 	order = Order.objects.filter(pk = oid)[0]
+	
 	order.people_joined.add(sUser)
 	return redirect('index')
 
@@ -164,7 +191,23 @@ def hasOrderArrived(request):
     	return HttpResponse(-1);
     else:
     	return HttpResponse(orders[0].pk)
-
+		
+#delete all meals
+def leaveOrder(request):
+	oid = request.GET['oid']
+	order = Order.objects.filter(pk = oid)[0]
+	sUser = User.objects.filter(username = request.user.username)[0]
+	order.people_joined.remove(sUser)
+	return redirect('index')
+	
+# recurse and delete all associated meals and people_joined
+def deleteOrder(request):
+	oid = request.GET['oid']
+	order = Order.objects.filter(pk = oid)[0]
+	# order.delete()
+	return redirect('index')
+	
+		
 def orderArrived(request):
 	sUser = User.objects.filter(username = request.user.username)[0]
 	orders = Order.objects.filter(people_joined = sUser)
