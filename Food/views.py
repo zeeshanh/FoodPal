@@ -211,13 +211,9 @@ def deleteOrder(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
 	allMealsCount = Meal.objects.filter(order = order).count()
-	people = order.people_joined.count()
 	for i in range(0, allMealsCount):
 		meal = Meal.objects.filter(order = order)[i]
 		meal.delete()
-	for j in range(0, people):
-		person = order.people_joined.all()[j]
-		order.people_joined.remove(person)
 	order.delete()
 	return redirect('index')
 	
