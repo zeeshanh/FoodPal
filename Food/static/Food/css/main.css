@@ -196,3 +196,9 @@ table.fixed td { overflow: hidden; }
 .alert-message p {
   margin-bottom: 0;
 }
+
+.leaveOrderButton {
+    clear:right;
+	 text-align: center;
+
+}
