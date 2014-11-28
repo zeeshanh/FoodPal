@@ -42,3 +42,8 @@ class Meal(models.Model):
 	owner = models.ForeignKey(User, null=True, unique = False)
 	def __unicode__(self):
 		return self.name
+
+class Notification(models.Model):
+	user = models.ForeignKey(User, unique = False)
+	order = models.ForeignKey(Order, unique= False)
+
