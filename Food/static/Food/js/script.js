@@ -22,10 +22,6 @@ function hasOrderArrived(){
                 }
 
             }
-
-            else if (data == -2){
-                $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has been cancelled by its creator!</strong></p></div>");
-            }
         }
     });
 }
@@ -493,7 +489,8 @@ function setTimer(i) {
 			rsec = "0"+rsec
 		if (rsec == 0) rmin += 1;
 		var ts = "Open for " + rmin + ":" + rsec
-		elems[i].innerHTML = ts // watch for spelling
+		if (elems[i] != null)
+			elems[i].innerHTML = ts
 	}
 	timer();
 	
