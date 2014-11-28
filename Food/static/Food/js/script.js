@@ -15,6 +15,9 @@ function hasOrderArrived(){
                 $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
                 var tone = document.getElementById("tone"); 
                 tone.play();
+				if (document.getElementById("leaveOrderButton") != null)
+					document.getElementById("leaveOrderButton").style.display = "none";				
+				
                 if (window.navigator && window.navigator.vibrate) {
                     navigator.vibrate([1000, 500, 1000, 500, 2000]);
                 } else {
@@ -31,16 +34,23 @@ function hasOrderArrived(){
     });
 }
 
-function orderArrived(orderId){
+function orderArrived(v, orderId){
     console.log("pressed arrived " + orderId);
+	
     $.ajax({
         type: "GET",
         url: "/Food/orderArrived",
         data: "data="+orderId,
         success: function(data) {
+		// (data);
             if (data == 1){
                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your friends will be notified that their food has arrived!</strong></p></div>");
                 console.log("Done");
+				jQuery(v).closest("tbody").parent().parent().parent().find(".timerDivs").parent().html("Arrived");
+				jQuery(v).hide();
+				
+				
+				
             }
         }
     });
@@ -118,6 +128,7 @@ function addorder() {
         url: url,
         data: data,
         success: function(data) {
+			// alert(data)
 			if (data == 1) 
 				window.location.reload();
 			else if (data == -1)
@@ -420,11 +431,10 @@ function setTimer(i) {
 		$(".timerDivs").eq(i).html("")
 		return;
 	};
-    // if ($(".timerDivs").eq(i).next().html().indexOf("Arrived") > -1) {
-		// alert('asd');
-		// $(".timerDivs").eq(i).html("")
-		// return;
-	// };	
+    if ($(".timerDivs").eq(i).next().html().indexOf("Arrived") > -1) {
+		$(".timerDivs").eq(i).html("")
+		return;
+	};	
 
 	// alert(elems[i].innerHTML);
 	var length = elems[i].innerHTML.split(', ').length
@@ -467,8 +477,10 @@ function setTimer(i) {
 		var b = elems[i].innerHTML
 		if (document.getElementById("newMealRow") != null && a == b)
 			document.getElementById("newMealRow").style.display = "none";		
-		
-		
+		if (document.getElementById("leaveOrderButton") != null)
+			document.getElementById("leaveOrderButton").style.display = "none";				
+				
+
 		
 		
 		// AJAX CALL UPDATES STATUS	

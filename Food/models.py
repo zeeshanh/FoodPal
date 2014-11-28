@@ -31,10 +31,8 @@ class Order(models.Model):
 	def __unicode__(self):
 		return unicode(self.creator) + " from " + unicode(self.restaurant)
 
-		 	 
-
 class Meal(models.Model):
-	name = models.CharField(max_length = 100)
+	name = models.CharField(max_length = 150)
 	price = models.IntegerField(default = 0)
 	count = models.IntegerField(default = 0)
 	restaurant = models.ForeignKey(Restaurant, unique=False)
@@ -42,7 +40,7 @@ class Meal(models.Model):
 	owner = models.ForeignKey(User, null=True, unique = False)
 	def __unicode__(self):
 		return self.name
-
+ 
 class Notification(models.Model):
 	user = models.ForeignKey(User, unique = False)
 	status = models.IntegerField(default =0)

@@ -34,7 +34,7 @@ from Food.models import Notification
 def index(request):
 	restaurants = Restaurant.objects.all()
 	locations = Location.objects.all() 
-	orders = Order.objects.all() 
+	orders = Order.objects.all().order_by('-date_created')
 	meals = Meal.objects.filter(order = None)
 	return render(request,'Food/index.html',{'restaurants': restaurants, 'locations' : locations, 'orders' : orders, 'meals' : meals, 'openo': 0, 't': timezone.now},
 					context_instance=RequestContext(request))
@@ -63,14 +63,13 @@ def neworder(request):
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
 	sUser = User.objects.filter(username = request.user.username)[0]
 	sLocation = Location.objects.filter(name = location)[0]
-	if (Order.objects.filter(creator = sUser).count() > 0):
-		print "sads"
+	if (Order.objects.filter(creator = sUser, status__lte = 0).count() > 0):
 		return HttpResponse(-1) 
-	elif (Order.objects.filter(restaurant = sRestaurant, location = sLocation).count() > 0):
-		userOpened = Order.objects.filter(restaurant = sRestaurant, location = sLocation)[0].creator.username
+	elif (Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0).count() > 0):
+		userOpened = Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0)[0].creator.username
 		return HttpResponse(userOpened) 
-	elif (Order.objects.filter(people_joined__username__contains = sUser.username).count() > 0):
-		userOpened = Order.objects.filter(people_joined__username__contains = sUser.username)[0].creator.username
+	elif (Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0).count() > 0):
+		userOpened = Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0)[0].creator.username
 		return HttpResponse("9" + userOpened) 
 	print sRestaurant
 	print request.user.username
@@ -176,7 +175,7 @@ def joinOrder(request):
 	sUser = User.objects.filter(username = request.user.username)[0]
 
 	# Already in another order or has created an order
-	if (Order.objects.filter(people_joined__username__contains = sUser.username).count() > 0):
+	if (Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0).count() > 0):
 		return HttpResponse(-1)
 	order = Order.objects.filter(pk = oid)[0]
 	
@@ -214,8 +213,9 @@ def deleteOrder(request):
 	order.save()
 	people = order.people_joined.all()
 	for person in people:
-		n = Notification(user = person, status = order.status)
-		n.save()
+		if person != order.creator:
+			n = Notification(user = person, status = order.status)
+			n.save()
 	allMealsCount = Meal.objects.filter(order = order).count()
 	for i in range(0, allMealsCount):
 		meal = Meal.objects.filter(order = order)[i]
@@ -233,6 +233,7 @@ def orderArrived(request):
 	order.save()
 	people = order.people_joined.all()
 	for person in people:
-		n = Notification(user = person, status = order.status)
-		n.save()
+		if person != order.creator:
+			n = Notification(user = person, status = order.status)
+			n.save()
 	return HttpResponse(1)

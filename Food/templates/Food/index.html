@@ -513,24 +513,28 @@
 												
 											{% endfor %}
 
-												{% if user.order_set.all.count  == 0 %}
+												{% if orders %}
+												{% for order2 in orders %}
+												{% if user != order2.creator and user not in order2.people_joined.all and order2.status  == -1 and order2 == order %}
 												<tr>
 												<td colspan="5" class="joinOrderClass">
 													<div class="form-group">
 													  <div class="col-md-14">
-														<button id="joinButton" onclick="joinOrder('{{order.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
+														<button id="joinButton" onclick="joinOrder('{{order2.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
 													  </div>
 													</div>								
 												</td>									
 												</tr>
 												{% endif %}
+												{% endfor %}
+												{% endif %}
 																				
-												{% if user.username  == order.creator.username %}
+												{% if user.username  == order.creator.username and order.status != 1 %}
 												<tr>
 												<td colspan="5" id="orderArrivedD">
 													<div class="form-group">
 													  <div class="col-md-14">
-														<button id="orderArrivedB" onclick="orderArrived('{{order.id}}')" class="btn btn-info">Order Arrived</button>
+														<button id="orderArrivedB" onclick="orderArrived(this, '{{order.id}}')" class="btn btn-info">Order Arrived</button>
 													  </div>
 													</div>								
 												</td>									
