@@ -12,12 +12,10 @@ function hasOrderArrived(){
         url: "/Food/hasOrderArrived",
         success: function(data) {
             if (data == 1){
-                $(".alerts").html("<div class='alert-message success'><a class='close' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
-                console.log("Done");
+                $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
                 var tone = document.getElementById("tone"); 
                 tone.play();
                 if (window.navigator && window.navigator.vibrate) {
-                    console.log("Vibarting");
                     navigator.vibrate([1000, 500, 1000, 500, 2000]);
                 } else {
                     console.log("Cant vibrate");
@@ -28,19 +26,38 @@ function hasOrderArrived(){
     });
 }
 
-function orderArrived(){
-    console.log("pressed arrived");
+function orderArrived(orderId){
+    console.log("pressed arrived " + orderId);
     $.ajax({
         type: "GET",
         url: "/Food/orderArrived",
+        data: "data="+orderId,
         success: function(data) {
             if (data == 1){
+                $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your friends will be notified that their food has arrived!</strong></p></div>");
                 console.log("Done");
             }
         }
     });
 }
 
+function removeNotification(){
+    $(".alerts").html("")
+}
+
+function viewmyorders(){
+     if ($("#openAllOrders").html() == "Close Orders »") {
+        // alert('ads');
+        $("#openAllOrders").html("Open Orders »")
+        $("#ordertable").hide()
+        $("#neworderbutton").html("Cancel Order »")
+        $("#neworderform").fadeIn("fast")
+        return;
+    }
+
+    $("#ordertable").fadeIn("fast")
+    
+}
 
 function neworderrollout() {
     if ($("#openAllOrders").html() == "Close Orders »") {
@@ -208,6 +225,7 @@ $(document).ready(function() {
 	}
 
     setInterval(hasOrderArrived, 30000);
+    hasOrderArrived();
 	
 	 $('.myorders1 th:nth-child(' + 5 + '), #myorders1 td:nth-child(' + 5 + ')').hide();
 	

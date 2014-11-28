@@ -26,6 +26,7 @@ from Food.models import Restaurant
 from Food.models import Location
 from Food.models import Order
 from Food.models import Meal
+from Food.models import Notification
 
 
 # Create your views here.
@@ -185,12 +186,14 @@ def joinOrder(request):
 
 def hasOrderArrived(request):
     sUser = User.objects.filter(username = request.user.username)[0]
-    orders = Order.objects.filter(people_joined = sUser, status =1 )
-    return HttpResponse(1)
-    if len(orders) == 0:
+    print sUser
+    notifications = Notification.objects.filter(user = sUser)
+    if len(notifications) == 0:
     	return HttpResponse(-1);
     else:
-    	return HttpResponse(orders[0].pk)
+    	status = notifications[0].order.status
+    	notifications[0].delete()
+    	return HttpResponse(status)
 		
 #delete all meals
 def leaveOrder(request):
@@ -221,7 +224,14 @@ def deleteOrder(request):
 	
 		
 def orderArrived(request):
-	sUser = User.objects.filter(username = request.user.username)[0]
-	orders = Order.objects.filter(people_joined = sUser)
-	orders[0].status=1;
+	print "here"
+	orderId = request.GET['data']
+	order = Order.objects.filter(pk = orderId)
+	order = order[0]
+	order.status = 1
+	order.save()
+	people = order.people_joined.all()
+	for person in people:
+		n = Notification(user = person, order = order)
+		n.save()
 	return HttpResponse(1)
