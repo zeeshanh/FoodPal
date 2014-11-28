@@ -134,25 +134,25 @@ function addorder() {
 	
 }
 
-function leaveOrder(oid) {
-    $.ajax({
+function leaveOrder(v, oid) {
+    $.ajax({ 
         type: "GET",
         url: "/Food/leaveOrder/",
-        data: "oid=" + oid,
+        data: "oid=" + oid, 
         success: function(data) {
-			window.location.reload();
+			jQuery(v).parent().parent().parent().parent().prev().remove();
+			jQuery(v).remove();
 		}  
     });
 
 }
-
-function deleteOrder(oid) {
+function deleteOrder(v, oid) {
     $.ajax({
         type: "GET",
         url: "/Food/deleteOrder/",
         data: "oid=" + oid,
         success: function(data) {
-			window.location.reload();
+			jQuery(v).closest(".orderrowclass")[0].remove()
 		}  
     });
 
