@@ -22,6 +22,11 @@ function hasOrderArrived(){
                 }
 
             }
+
+            else if (data == -2){
+                console.log("Order cancelled")
+                $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has been cancelled by its creator!</strong></p></div>");
+            }
         }
     });
 }
