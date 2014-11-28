@@ -65,16 +65,20 @@
 				</div>
 				<!-- /.navbar-collapse -->
 			</div>
-			<div class = "alerts"></div>
 			<!-- /.container -->
 		</nav>
+		<div class = "alerts"></div>
 		<!-- Page Content -->
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-12">
 				</div>
 			</div>
+			{% if user.first_name %}
 			<h1> Welcome back, {{user.first_name}}.</h1>
+			{% else %}
+			<h1> Welcome back, {{user.username}}.</h1>
+			{% endif %} 
 			<br><br><br><br>
 			<div class="row">
 				<div class="col-lg-4 md">
@@ -265,6 +269,8 @@
 						
 						
 					</div>
+					
+					
 					<div class="lead" id="myorders">
 						<table class="table table-hover" id='myorders1'>
 							<thead>
@@ -280,7 +286,7 @@
 							<tbody>
 								{% if orders %}
 								{% for order in orders %}
-								<tr>
+								<tr class='orderrowclass'>
 									<td> 
 										{% if order.dineIn  %} 
 										Dine Out
@@ -291,18 +297,17 @@
 									<td>{{order.restaurant}}</td>
 									<td>{{order.location}}</td>
 									<td> 
-										{% if order.status == -1 %}
 										<div class="timerDivs">
 										{{order.date_created | timesince }}, {{order.timeLimit}}
 										</div> 
 										<div>
-										</div>
-<!-- 										 {{order.date_created |date:"g:i a"}}, {{order.timeLimit}}
- -->										{% elif order.status == 0 %}
+										{% if order.status == 0 %}
 										On the way
-										{% else %}
+										{% elif order.status == 1 %}
 										Arrived
 										{% endif %}	
+										</div>
+
 									</td>
 									<!-- People Joined table, Person Meals and Total Price -->
 									<td class="peopleJoinedTable">
@@ -322,7 +327,13 @@
 														{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
 														Me (Owner)
 														{% elif person_joined.username == order.creator.username %}
-														{{person_joined.first_name}} {{person_joined.last_name}} (Owner)
+														
+															{% if user.first_name %}
+																{{person_joined.first_name}} {{person_joined.last_name}} (Owner)
+															{% else %}
+																{{ person_joined.username }} (Owner)
+															{% endif %}														
+																
 														{% else %}
 														{{person_joined.first_name}} {{person_joined.last_name}}
 														{% endif %}
@@ -361,7 +372,7 @@
 																</tr>
 																{% endif %}
 																{% endfor %}
-																{% if user.username == person_joined.username %}
+																{% if user.username == person_joined.username and order.status == -1 %}
 																<tr id="newMealRow">
 																	<td>
 																		<div> <em> New Meal </em> </div>
@@ -381,7 +392,7 @@
 																			</select>
 																		</div>
 																	</td>
-																	<td>
+																	<td> 
 																		<div  class="countBox">
 																			<select id="mealcountselecter" name="mealcountselecter" class="form-control">
 																				<option value="">1</option>
@@ -461,12 +472,12 @@
 				
 
 
-												{%   if user.username == order.creator.username %}
+												{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
 												<tr>
 												<td colspan="5" class="leaveOrderButton">
 													<div class="form-group">
 													  <div class="col-md-14">
-														<button id="leaveOrderButton" onclick="deleteOrder('{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
+														<button id="leaveOrderButton" onclick="deleteOrder(this,'{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
 													  </div>
 													</div>								
 												</td>									
@@ -479,7 +490,7 @@
 												<td colspan="5" class="leaveOrderButton">
 													<div class="form-group">
 													  <div class="col-md-14">
-														<button id="leaveOrderButton" onclick="leaveOrder('{{order.id}}')" name="leaveOrderButton" class="btn btn-warning">Leave Order</button>
+														<button id="leaveOrderButton" onclick="leaveOrder(this, '{{order.id}}')" name="leaveOrderButton" class="btn btn-warning">Leave Order</button>
 													  </div>
 													</div>								
 												</td>									
@@ -527,16 +538,24 @@
 									</td>
 									
 									<td class="peopleJoinedShort">
-											{% if order.people_joined.all.count == 1 %}
-												
-												{% if user.username == order.creator.username %}
-													You
-												{% else %}
-													1 person
-												{% endif %}
+										{% if order.people_joined.all.count == 1 %}
+											{% if user.username == order.creator.username %}
+												You
 											{% else %}
-												{{order.people_joined.all.count}} people joined
-											{% endif %}	
+																					
+												{% if user.first_name %}
+													{{order.creator.first_name}} {{order.creator.last_name}}
+												{% else %}
+													{{order.creator.username}}
+												{% endif %} 											
+																					
+											
+											{% endif %}
+										{% elif user in order.people_joined.all %}
+											You and {{order.people_joined.all.count|add:"-1"}} other(s)
+										{% else %}
+											{{order.people_joined.all.count}} people
+										{% endif %}	
 									</td>
 									<td> 
 										  <div class="col-md-4">
