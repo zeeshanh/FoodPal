@@ -132,7 +132,6 @@ function addorder() {
     restaurant = $("#restaurantselector").find(":selected").text();
     data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit;
 	var url = location.href.replace( '/#', '') + '/neworder/'
-    var url = location.href.replace( 'section2', '') + '/neworder/'
 	
     $.ajax({
         type: "GET",
@@ -316,7 +315,6 @@ function addMeal(v, pj, oid) {
     var newTotal = parseInt(current) + (price * count)
 
     var url = location.href.replace( '/#', '')
-    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/addmeal/',
@@ -376,7 +374,6 @@ function addRemove(t, a) {
 
 function removeMeal(t, mid) {
 	var url = location.href.replace( '/#', '')
-    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/removeMeal/',
@@ -404,7 +401,6 @@ function createMealButtonF(t, restaurant) {
 	// alert(mealName);
 	// alert(mealPrice);
     var url = location.href.replace( '/#', '')
-    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/createNewMeal/',
@@ -535,7 +531,6 @@ function createRestaurant() {
 		data = "restaurant=" + restaurant + "&restaurantWebsite=" + restaurantWebsite
 	}
     var url = location.href.replace( '/#', '')
-    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/addNewRestaurant/',
@@ -576,7 +571,6 @@ function addLocation() {
     newLocation = $("#addLocationBox").val();
 
 	data = "newLocation=" + newLocation;
-     var url = location.href.replace('section2', '')
 	var url = location.href.replace( '/#', '') + '/addNewLocation/'
     console.log(url);
    $.ajax({
