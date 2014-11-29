@@ -24,6 +24,8 @@ h3{
   background-image: url("../images/food8.jpg");
   background-repeat:no-repeat;
   background-size:cover;
+  width: 100%
+
 }
 
 .addSign, .removeSign {
