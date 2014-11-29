@@ -9,7 +9,6 @@ from django.contrib.auth.decorators import permission_required
 from django.shortcuts import redirect
 from django.utils.html import strip_tags
 from django.contrib.auth.models import User
-from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from django.template import RequestContext
 from django.core.exceptions import PermissionDenied
@@ -18,9 +17,12 @@ from django.contrib import messages
 from forms import MyRegistrationForm
 from django.contrib.auth.forms import UserCreationForm
 from django.core.context_processors import csrf
-import json
 from django.utils import timezone
-
+from django.core.validators import URLValidator
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+from django.utils.html import strip_tags
+import json
 
 from Food.models import Restaurant
 from Food.models import Location
@@ -45,6 +47,7 @@ def logoutv(request):
 	logout(request)
 	return redirect('index')
 	
+@login_required(login_url='/Food/login/')
 def register_user(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
@@ -56,6 +59,7 @@ def register_user(request):
 	args['form'] = UserCreationForm()
 	return render_to_response('Food/signup.html', args)	
 
+@login_required(login_url='/Food/login/')
 def neworder(request):
 	restaurant= request.GET['restaurant']
 	location= request.GET['location']
@@ -73,17 +77,18 @@ def neworder(request):
 		return HttpResponse("9" + userOpened) 
 	print sRestaurant
 	print request.user.username
-	newO = Order(timeLimit = int(timelimit),\
+	newO = Order(timeLimit = int(strip_tags(timelimit)),\
 				 creator = sUser,\
 				 location = sLocation,\
 				 restaurant = sRestaurant)
-	print 'here1'
-	print newO
+	print 'here111111111111111111111'
+	print newO.id
 	newO.save()
 	newO.people_joined.add(sUser)
 	# print 'here2'
 	return HttpResponse(1) 
 	
+@login_required(login_url='/Food/login/')
 def newdineout(request):
 	restaurant= request.GET['restaurant']
 	location= request.GET['location']
@@ -106,6 +111,7 @@ def newdineout(request):
 	print 'here2'
 	return HttpResponse(1) 
 	
+@login_required(login_url='/Food/login/')
 def addmeal(request):
 	mealName = request.GET['mealName']
 	count = request.GET['count']
@@ -114,7 +120,7 @@ def addmeal(request):
 	sUser = User.objects.filter(username = userM)[0]
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
-	if ((Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser).count()) > 0):
+	if ((Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order).count()) > 0):
 		print "ALREADY HERE\n"
 		meal = Meal.objects.filter(name = mealName, count__gte = 1)[0]
 		meal.count = meal.count + int(count);
@@ -127,49 +133,65 @@ def addmeal(request):
 	print mealPrice
 	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
 	newM.save()
-	print newM.id
+	print "AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+	print newM.id 
 	return HttpResponse(newM.id) 
 
 	
   		
+@login_required(login_url='/Food/login/')
 def removeMeal(request):
 	mID = request.GET['mealID']
-	Meal.objects.filter(id = mID)[0].delete()
+	meal = Meal.objects.filter(id = mID)[0]
+	if meal.owner != request.user:
+		return HttpResponse("Bad request!")
+	elif meal.order.status != -1:
+		return HttpResponse("Bad request!")
+	meal.delete()
 	return HttpResponse(1)
 
+@login_required(login_url='/Food/login/')
 def createNewMeal(request):
 	mealName = request.GET['mealName']
 	restaurant = request.GET['restaurant']
 	mealPrice = request.GET['mealPrice']
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
-	if (Meal.objects.filter(name = mealName, restaurant = sRestaurant).count() > 0):
+	if (Meal.objects.filter(name = strip_tags(mealName), restaurant = sRestaurant).count() > 0):
 		return HttpResponse(-1)
-	newM = Meal(name = mealName, price = int(mealPrice), restaurant = sRestaurant) 
+	newM = Meal(name = mealName, price = int(strip_tags(mealPrice)), restaurant = sRestaurant) 
 	newM.save()	
 	return HttpResponse(3) 
 	
+@login_required(login_url='/Food/login/')
 def addNewRestaurant(request):
+	validate = URLValidator()
 	restaurant = request.GET['restaurant']
 	restaurantWebsite = request.GET['restaurantWebsite']
 	if (Restaurant.objects.filter(name = restaurant).count() > 0):
 		return HttpResponse(-1)
 
 	if (restaurantWebsite == "0"):
-		newR = Restaurant(name = restaurant, webpage = None)
+		newR = Restaurant(name = strip_tags(restaurant), webpage = None)
 	else:
+		try:
+			validate(restaurantWebsite)
+		except ValidationError, e:
+			return HttpResponse(-2)
 		newR = Restaurant(name = restaurant, webpage = restaurantWebsite)
 	newR.save()
 	return HttpResponse(4)
 	
+@login_required(login_url='/Food/login/')
 def addNewLocation(request):
 	newLocation = request.GET['newLocation']
-	if (Location.objects.filter(name = newLocation).count() > 0):
+	if (Location.objects.filter(name = strip_tags(newLocation)).count() > 0):
 		return HttpResponse(-1)
 	
 	newL = Location(name = newLocation)
 	newL.save()
 	return HttpResponse(5)
 
+@login_required(login_url='/Food/login/')
 def joinOrder(request):
 	oid = request.GET['oid']
 	sUser = User.objects.filter(username = request.user.username)[0]
@@ -178,16 +200,15 @@ def joinOrder(request):
 	if (Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0).count() > 0):
 		return HttpResponse(-1)
 	order = Order.objects.filter(pk = oid)[0]
-	
+	if (order.status >= 0):
+		return HttpResponse("Bad request!")
 	order.people_joined.add(sUser)
 	return redirect('index')
 
+@login_required(login_url='/Food/login/')
 def hasOrderArrived(request):
-    print("ASDASDDA")
     sUser = User.objects.filter(username = request.user.username)[0]
-    order = Order.objects.filter(people_joined__username__contains = sUser.username).order_by('-date_created')
-    
-
+    order = Order.objects.filter(people_joined__username__contains = sUser.username).order_by('-date_created')    
     # print sUser
     notifications = Notification.objects.filter(user = sUser)
     if len(notifications) == 0:
@@ -198,9 +219,12 @@ def hasOrderArrived(request):
     	numberToSend = status
     	if (order.count()>0):
             numberToSend = order[0].id
+        if (status == -2):
+            numberToSend = status
     	return HttpResponse(numberToSend)
 		
 #delete all meals
+@login_required(login_url='/Food/login/')
 def leaveOrder(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
@@ -212,10 +236,19 @@ def leaveOrder(request):
 	order.people_joined.remove(sUser)
 	return redirect('index')
 	
-# recurse and delete all associated meals and people_joined
+# recurse and delete all associated meals
+@login_required(login_url='/Food/login/')
 def deleteOrder(request):
 	oid = request.GET['oid']
+	if  Order.objects.filter(pk = oid).count() == 0:
+		return HttpResponse("Bad request; order doesn't exist!")
 	order = Order.objects.filter(pk = oid)[0]
+	if order.creator != request.user:
+		return HttpResponse("Bad request!")
+	elif order.status == 1:
+		return HttpResponse("Cannot delete an old order!")
+	elif order.status == 0:
+		return HttpResponse("Cannot delete an older that's on the way!")
 	order.status = -2
 	order.save()
 	people = order.people_joined.all()
@@ -231,6 +264,7 @@ def deleteOrder(request):
 	return redirect('index')
 	
 		
+@login_required(login_url='/Food/login/')
 def orderArrived(request):
 	print "here"
 	orderId = request.GET['data']
@@ -245,9 +279,12 @@ def orderArrived(request):
 			n.save()
 	return HttpResponse(1)
 	
+@login_required(login_url='/Food/login/')
 def orderTimeUp(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
+	if order.status == 1:
+	    return HttpResponse(1)
 	order.status = 0
 	order.save()
 	return HttpResponse(1)

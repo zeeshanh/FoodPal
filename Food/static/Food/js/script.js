@@ -1,6 +1,3 @@
-var isSomethingVisible;
-var openForm;
-
 function logoutuser() {
     location.href = "logoutv/"
 }
@@ -9,33 +6,23 @@ function hasOrderArrived(){
     console.log("function start");
     $.ajax({
         type: "GET",
-        url: "/Food/hasOrderArrived",
+        url: "hasOrderArrived/",
         success: function(data) {
-
             if (data >= 1){
-				// alert(data) 
 				constructID =data+",-1"
 				var x=document.getElementById(constructID);
 				x.innerHTML = "Arrived"
-				// alert(constructID)
-				// alert($(constructID).html()	)
-				// alert($(constructID).next().html()	)
-				// $(constructID).next().html()			
-			
                 $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
                 var tone = document.getElementById("tone"); 
                 tone.play();
 				if (document.getElementById("leaveOrderButton") != null)
 					document.getElementById("leaveOrderButton").style.display = "none";				
-				
                 if (window.navigator && window.navigator.vibrate) {
                     navigator.vibrate([1000, 500, 1000, 500, 2000]);
                 } else {
                     console.log("Cant vibrate");
                 }
-
             }
-
             else if (data == -2){
                 console.log("Order cancelled")
                 $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has been cancelled by its creator!</strong></p></div>");
@@ -46,10 +33,9 @@ function hasOrderArrived(){
 
 function orderArrived(v, orderId){
     console.log("pressed arrived " + orderId);
-	
     $.ajax({
         type: "GET",
-        url: "/Food/orderArrived",
+        url: "orderArrived/",
         data: "data="+orderId,
         success: function(data) {
 		// (data);
@@ -58,9 +44,6 @@ function orderArrived(v, orderId){
                 console.log("Done");
 				jQuery(v).closest("tbody").parent().parent().parent().find(".timerDivs").parent().html("Arrived");
 				jQuery(v).hide();
-				
-				
-				
             }
         }
     });
@@ -79,9 +62,7 @@ function viewmyorders(){
         $("#neworderform").fadeIn("fast")
         return;
     }
-
     $("#ordertable").fadeIn("fast")
-    
 }
 
 function neworderrollout() {
@@ -93,7 +74,6 @@ function neworderrollout() {
         $("#neworderform").fadeIn("fast")
 		return;
 	}
-
     if ($("#neworderbutton").html() == "Cancel Order »") {
         $("#neworderbutton").html("New Order »")
         $("#neworderform").fadeOut("fast")
@@ -103,9 +83,7 @@ function neworderrollout() {
     }
 	$("#addLocationDiv").hide();
 	$("#addRestaurantDiv").hide();
-
 }
-
 
 function viewAllOrders() {
 	$("#addLocationDiv").hide();
@@ -125,20 +103,22 @@ function viewAllOrders() {
 	
 }
 
-
 function addorder() {
     timelimit = $("#timelimitfield").val();
     mylocation = $("#locationselector").find(":selected").text();
     restaurant = $("#restaurantselector").find(":selected").text();
-    data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit;
-	var url = location.href.replace( '/#', '') + '/neworder/'
 	
+	if (isNaN(timelimit) || timelimit <= 0) {
+		alert("Enter an appropriate time limit.");
+		return
+	}	
+    data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit;
+	// var url = location.href.replace( '/#', '') + '/neworder/'
     $.ajax({
         type: "GET",
-        url: url,
+		url:  'neworder/',
         data: data,
         success: function(data) {
-			// alert(data)
 			if (data == 1) 
 				window.location.reload();
 			else if (data == -1)
@@ -148,74 +128,53 @@ function addorder() {
 			else
 				alert(data + " has the same order details! Join that order.")
 		}
-
-            // alert(data);
-			// $("#neworderbutton").html("New Order »")
-			// $("#neworderform").hide()
-			// $("#openAllOrders").html("Open Orders »")
-			// $("#myorders").fadeIn("fast")
-        
     });
-	
-	
 }
 
 function leaveOrder(v, oid) {
     $.ajax({ 
         type: "GET",
-        url: "/Food/leaveOrder/",
+        url: "leaveOrder/",
         data: "oid=" + oid, 
         success: function(data) {
 			jQuery(v).parent().parent().parent().parent().prev().remove();
 			jQuery(v).remove();
 		}  
     });
-
 }
+
 function deleteOrder(v, oid) {
     $.ajax({
         type: "GET",
-        url: "/Food/deleteOrder/",
+        url: "deleteOrder/",
         data: "oid=" + oid,
         success: function(data) {
 			document.getElementById(oid).style.display = "none";
 		}  
     });
-
 }
-
 
 $(document).ready(function() {
 
     document.getElementById("neworderform").style.display = "none";
     document.getElementById("ordertable").style.display = "none";
-	// if (document.getElementById("orderArrivedD") != null)
-		// document.getElementById("orderArrivedD").style.display = "none";
 		document.getElementById("myorders").style.display = "none";
 	if (document.getElementById("createMealForm") != null)
 		document.getElementById("createMealForm").style.display = "none";
     document.getElementById("addRestaurantDiv").style.display = "none";
     document.getElementById("addLocationDiv").style.display = "none";
     var elems = document.getElementsByClassName('singleAdd');
-    // var peopleJoinedShortDivs = document.getElementsByClassName('peopleJoinedShort');
-	// for (var j = 0; j < peopleJoinedShortDivs.length; j++)
-        // peopleJoinedShortDivs[j].style.display = "none";
     var addBoxes = document.getElementsByClassName('addBox');
     var countBoxes = document.getElementsByClassName('countBox');
     var removeSignDivs = document.getElementsByClassName('removeSignDiv');
-	// if (document.getElementById("SRO").innerHTML.length > 5) 
-		// viewyourorder()  peopleJoinedShort
     for (var i = 0; i < elems.length; i++) {
         elems[i].style.display = "none";
         addBoxes[i].style.display = "none";
         countBoxes[i].style.display = "none";
     }
-	
-    for (i = 0; i < removeSignDivs.length; i++) {
-
+    for (i = 0; i < removeSignDivs.length; i++)
         removeSignDivs[i].style.display = "none";
-    }
-
+    
     function getCookie(name) {
             var cookieValue = null;
             if (document.cookie && document.cookie != '') {
@@ -231,6 +190,7 @@ $(document).ready(function() {
             }
             return cookieValue;
     }
+	
     // Ajax setup to forward the CSRF token
     $.ajaxSetup({
         beforeSend: function(xhr, settings) {
@@ -243,18 +203,14 @@ $(document).ready(function() {
         }
     });
 	
-	
     var allTimerDivs = document.getElementsByClassName('timerDivs');
-	for (i = 0; i < allTimerDivs.length; i++)
-	{	
+	for (i = 0; i < allTimerDivs.length; i++)	
 		setTimer(i)
-	}
 
     setInterval(hasOrderArrived, 3000);
     hasOrderArrived();
 	
 	 $('.myorders1 th:nth-child(' + 5 + '), #myorders1 td:nth-child(' + 5 + ')').hide();
-	
 })
 
 function showDetails(v) {
@@ -262,35 +218,12 @@ function showDetails(v) {
 		jQuery(v).parent().parent().prev().hide()
 		jQuery(v).html("Hide Details")
 		jQuery(v).parent().parent().prev().prev().fadeIn("fast");
-
 	} else {
 		jQuery(v).parent().parent().prev().fadeIn("fast");
 		jQuery(v).html("Show Details")
 		jQuery(v).parent().parent().prev().prev().hide();
 	}
 }
-// function viewopenorders() {
-    // if ($("#neworderbutton").html() == "Cancel Order »") {
-	
-        // $("#neworderbutton").html("New Order »")
-        // $("#neworderform").fadeOut("fast", function() {
-			// $("#ordertable").fadeIn("fast")
-		
-		
-		
-		// })	
-	
-
-    // }
-    // if ($("#openorderbutton").html() == "Close Orders »") {
-        // $("#openorderbutton").html("Open Orders »")
-        // $("#ordertable").fadeOut("fast")
-    // } else {
-        // $("#openorderbutton").html("Close Orders »")
-        // $("#ordertable").fadeIn("fast")
-    // }
-// }
-
 
 function newMeal(v) {
     jQuery(v).children().eq(0).fadeOut("fast", function() {
@@ -303,21 +236,19 @@ function newMeal(v) {
 	})
 }
 
-
 function addMeal(v, pj, oid) {
 	var user = pj;
     // alert('ads')
     mealName = ($("#mealselecter").find(":selected").text()).split(',')[0];
     count = $("#mealcountselecter").find(":selected").text();
     price = (($("#mealselecter").find(":selected").text()).split(',')[1]).split(' ')[1];
-
     var current = jQuery(v).parent().parent().parent().parent().parent().parent().next().children().last().html().split('>').pop()
     var newTotal = parseInt(current) + (price * count)
 
-    var url = location.href.replace( '/#', '')
+    // var url = location.href.replace( '/#', '')
     $.ajax({
         type: "GET",
-        url: url + '/addmeal/',
+        url:  'addmeal/',
         data: "mealName=" + mealName + "&count=" + count + "&userM=" + user + "&oid=" + oid,
         success: function(data) {
 			available = true;
@@ -364,7 +295,6 @@ function addMeal(v, pj, oid) {
     });
 }
 
-
 function addRemove(t, a) {
     if (a == 0)
         jQuery(t).children().eq(1).show();
@@ -373,10 +303,10 @@ function addRemove(t, a) {
 }
 
 function removeMeal(t, mid) {
-	var url = location.href.replace( '/#', '')
+	// var url = location.href.replace( '/#', '')
     $.ajax({
         type: "GET",
-        url: url + '/removeMeal/',
+        url:  'removeMeal/',
         data: "mealID=" + mid,
         success: function(data) {}
     });
@@ -397,26 +327,30 @@ function createMeal(t) {
 
 function createMealButtonF(t, restaurant) {
     mealName = $("#createMealName").val();
+	if (mealName == "") {
+		alert("Enter a meal name.");
+		return
+	}	
     mealPrice = $("#createMealPrice").val();
-	// alert(mealName);
-	// alert(mealPrice);
-    var url = location.href.replace( '/#', '')
+	if (isNaN(mealPrice) || mealPrice <= 0) {
+		alert("Enter an appropriate price.");
+		return
+	}
+    // var url = location.href.replace( '/#', '')
     $.ajax({
         type: "GET",
-        url: url + '/createNewMeal/',
+        url:  'createNewMeal/',
         data: "mealName=" + mealName + "&mealPrice=" + mealPrice + "&restaurant=" + restaurant,
         success: function(data) {
 			if (data == 3) {
 				var aHtml = '<option value="">' + mealName + ', ' + mealPrice + ' QAR</option>'
 				$("#lastOption").before(aHtml)
-
 				$("#createMealForm").fadeOut("fast", function() {
 					$("#newMealRow").show();
 					$('#mealselecter option:selected').prev().attr('selected', 'selected');
-
 				})
 			} else {
-				alert("Meal already available");
+				alert("Meal already available.");
 			}
         }
     });
@@ -430,7 +364,6 @@ function cancelNewMealF() {
     })
 }
 
-
 function setTimer(i) {
     // alert($(".timerDivs").eq(i).next().html())
     // alert($(".timerDivs").eq(i).next().html().indexOf("On the way"))
@@ -442,24 +375,11 @@ function setTimer(i) {
 		return;
 	};
 
+	secondsElapsed = parseInt(elems[i].innerHTML.split(', ')[0])
+	secondsLimit = parseInt(elems[i].innerHTML.split(', ')[1])*60
 
-	// alert(elems[i].innerHTML);
-	var length = elems[i].innerHTML.split(', ').length
-	// alert(length)
 	orderTime = parseInt(elems[i].innerHTML.split(', ')[elems[i].innerHTML.split(', ').length-1])
-	if (length == 2)
-		timeElapsed = parseInt(elems[i].innerHTML.split('&')[0])
-	else {
-		hours = (parseInt(elems[i].innerHTML.split('&')[0]))
-		min = (parseInt(elems[i].innerHTML.split('&')[1].split(',')[1]))
-		timeElapsed = (hours*60)+min
-	}
-	// alert("OT: " + orderTime)
-	// alert("TE: " + timeElapsed)
-	// alert()
-	// alert(ff)
-	// alert(orderTime-timeElapsed)
-	var count=(orderTime-timeElapsed)*60;
+	var count=secondsLimit-secondsElapsed
 	var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
 	function timer()
 	{
@@ -473,8 +393,7 @@ function setTimer(i) {
 		
 		if (document.getElementById("deleteOrderDiv") != null)
 			document.getElementById("deleteOrderDiv").style.display = "none";
-		// if ($('.timerDivs :has(#newMealRow)').length > 0)
-			// alert("ASD");
+
 		var a = $('#newMealRow').parent().parent().parent().parent().parent().parent().parent().prev().first().children().first().html()
 		var b = elems[i].innerHTML
 		if (document.getElementById("newMealRow") != null && a == b)
@@ -482,18 +401,15 @@ function setTimer(i) {
 		if (document.getElementById("leaveOrderButton") != null)
 			document.getElementById("leaveOrderButton").style.display = "none";				
 				
-
-		// AJAX CALL UPDATES STATUS	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// AJAX CALL UPDATES STATUS	
 	   $.ajax({
 			type: "GET",
-			url: "/Food/orderTimeUp/",
+			url: "orderTimeUp/",
 			data: "oid=" + oidAndStatus[0],
 			success: function(data) {
-				alert('status updated');
+				// alert('status updated');
 			}
-		});
-
-		
+		});	
 		 return;
 	  }
 		var rmin = (Math.ceil(count/60)-1)
@@ -523,6 +439,10 @@ function addNewRestaurant() {
 function createRestaurant() {
 
     restaurant = $("#createRestaurantBox").val();
+	if (restaurant == "") {
+		alert("Enter a restaurant name.");
+		return
+	}	
     restaurantWebsite = $("#createRestaurantSiteBox").val();
 	var data;
 	if (restaurantWebsite=="") {
@@ -530,23 +450,23 @@ function createRestaurant() {
 	} else {
 		data = "restaurant=" + restaurant + "&restaurantWebsite=" + restaurantWebsite
 	}
-    var url = location.href.replace( '/#', '')
     $.ajax({
         type: "GET",
-        url: url + '/addNewRestaurant/',
+        url:  'addNewRestaurant/',
         data: data,
         success: function(data) {
 			if (data == 4) {
 				var aHtml = '<option value="">' + restaurant + '</option>'
 				$("#restLastOption").before(aHtml)
 				$('#restaurantselector option:selected').prev().attr('selected', 'selected');
-				
 				$("#addRestaurantDiv").fadeOut("fast", function() {
 				$("#neworderform").show(); 
 				})
+			} else if (data == -1) {
+				alert("Restaurant already available.");
 			} else {
-				alert("Restaurant already available");
-			}				
+				alert("Bad URL given.");
+			}			
         }
     });	
 }
@@ -569,12 +489,15 @@ function addNewLocation() {
 function addLocation() {
 
     newLocation = $("#addLocationBox").val();
-
+	if (newLocation == "") {
+		alert("Enter a location name.");
+		return
+	}	
 	data = "newLocation=" + newLocation;
-	var url = location.href.replace( '/#', '') + '/addNewLocation/'
-   $.ajax({
+	// var url = location.href.replace( '/#', '') + '//'
+	$.ajax({
         type: "GET",
-        url: url,
+        url:  'addNewLocation/',
         data: data,
         success: function(data) {
 			if (data == 5) {
@@ -590,42 +513,25 @@ function addLocation() {
 			}
         }
     });	
-	// alert
 }
- 
+
 function cancelAddNewLocation() {
 	$('#locationselector option:selected').prev().attr('selected', 'selected');
 	$("#addLocationDiv").fadeOut("fast", function() {
 	$("#neworderform").show(); 
 	})		
-}
+} 
 
 function joinOrder(oid) {
-	// obj = eval('{' + meals.substring(1,meals.length-1) + '}'); 
-	// alert(meals.substring(1,meals.length-1));
-	// myArray = (meals.substring(1,meals.length-1)).split(",");
-	// alert('asd')
-    // for (var i = 0; i < myArray.length; i++) {
-		// if (i==0) {
-			// myArray[i] = myArray[i].substring(7,myArray[i].length-1);
-		// } else {
-			// myArray[i] = myArray[i].substring(8,myArray[i].length-1);
-		// }
-		// alert("+"+myArray[i]+"+");
-    // }
    $.ajax({
         type: "GET",
-        url: "/Food/joinOrder/",
+        url: "joinOrder/",
         data: "oid=" + oid,
         success: function(data) {
 			if (data == -1)
-				alert('???')
+				alert('')
 			else 
 				window.location.reload();
-
         }
     });		
-	
-	// viewyourorder();
 }	
-	

@@ -127,12 +127,16 @@
 								<tr>
 									<td> 
 										{% if order.dineIn  %} 
-										Dine Out
+										Dine Out 
 										{% else %}
 										Delivery
 										{% endif %}	
 									</td>
-									<td>{{order.restaurant}}</td>
+									{% if order.restaurant.webpage != None %}
+									<td><a href="{{order.restaurant.webpage}}" target="_blank"> {{order.restaurant}}</a> </td>  
+									{% else %}
+									<td> {{order.restaurant}} </td>  
+									{% endif %}
 									<td>{{order.location}}</td>
 									<td>{{order.creator}}</td>
 									<td> 
@@ -296,11 +300,15 @@
 										Delivery
 										{% endif %}	
 									</td>
-									<td>{{order.restaurant}}</td>
+									{% if order.restaurant.webpage != None %}
+									<td><a href="{{order.restaurant.webpage}}" target="_blank"> {{order.restaurant}}</a> </td>  
+									{% else %}
+									<td> {{order.restaurant}} </td>  
+									{% endif %}
 									<td>{{order.location}}</td>
 									<td> 
 										<div class="timerDivs" id="{{order.id}},{{order.status}}">
-										{{order.date_created | timesince }}, {{order.timeLimit}}
+										 {{order.date_created|timesince_human }}, {{order.timeLimit}}
 										</div> 
 										<div>
 										{% if order.status == 0 %}
@@ -368,7 +376,7 @@
 																			{{meal.name}}
 																		</div>
 																		<div class="removeSignDiv">
-																			{% if meal.owner.username == user.username %}
+																			{% if meal.owner.username == user.username  and meal.order.status == -1%}
 																			<img onclick= "removeMeal(this, {{meal.id}})" class="removeSign" src="{% static 'Food/images/remove.png' %}" alt=""  > 
 																			{% endif %}
 																		</div>
