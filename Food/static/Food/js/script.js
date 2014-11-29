@@ -576,8 +576,9 @@ function addLocation() {
     newLocation = $("#addLocationBox").val();
 
 	data = "newLocation=" + newLocation;
+     var url = location.href.replace('section2', '')
 	var url = location.href.replace( '/#', '') + '/addNewLocation/'
-    var url = location.href.replace('section2', '')
+    console.log(url);
    $.ajax({
         type: "GET",
         url: url,
