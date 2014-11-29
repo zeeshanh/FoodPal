@@ -170,12 +170,7 @@
 					<div class="lead">
 						<div class="form-horizontal" id="neworderform" >
 							<!-- Select Basic -->
-							
-			
-							
-							
-							
-							
+						
 							<div class="form-group">
 								<label class="col-md-4 control-label" >Select Restaurant</label>
 								<div class="col-md-6">
@@ -190,12 +185,6 @@
 								</div>
 							</div>
 
-							
-							
-							
-							
-							
-							
 							<!-- Select Basic -->
 							<div class="form-group">
 								<label class="col-md-4 control-label" >Select Location</label>
@@ -252,8 +241,6 @@
 								</div>
 							</div>
 							
-							
-							
 						</div>
 						
 						<div class="form-horizontal"  id="addRestaurantDiv">
@@ -284,14 +271,6 @@
 							</div>
 						</div>
 																
-						
-
-
-
-
-
-
-
 						<div class="form-horizontal"  id="addLocationDiv">
 							<!-- Text input-->
 							<div class="form-group">
@@ -311,13 +290,8 @@
 							  </div>
 							</div>
 						</div>						
-						
-						
-						
-						
-						
+	
 					</div>
-					
 					
 					<div class="lead" id="myorders">
 						<table class="table table-hover" id='myorders1'>
@@ -366,19 +340,11 @@
 												Completed
 												{% endif %}
 											{% endif %}	
-											
 											</div>
-
 										</td>
+										
 										<!-- People Joined table, Person Meals and Total Price -->
-										
 										{% if order.dineIn  %} 
-
-										
-										
-										
-										
-										
 								
 										<td class="peopleJoinedTable">
 											<table class="table table-hover" id='peoplesorders'>
@@ -402,9 +368,8 @@
 																	{{ person_joined.username }} (Owner)
 																{% endif %}														
 																	
-
 															{% else %}
-															
+														
 																{% if person_joined.first_name %}
 																	{{person_joined.first_name}} {{person_joined.last_name}}
 																{% else %}
@@ -413,8 +378,6 @@
 															
 															{% endif %}
 														</td>
-														
-														
 													</tr>
 
 													{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
@@ -430,7 +393,6 @@
 				
 													{%  elif user.username  == person_joined.username and order.status == -1 %}
 													
-												
 													<tr>
 													<td colspan="5" class="leaveOrderButton">
 														<div class="form-group">
@@ -440,13 +402,8 @@
 														</div>								
 													</td>									
 													</tr>												
-													{% endif %}
+												{% endif %}
 
-
-					
-					
-					
-													
 												{% endfor %}
 
 													{% if orders %}
@@ -465,39 +422,15 @@
 													{% endif %}
 													{% endfor %}
 													{% endif %}											
-												
+
 												{% endif %}
-																					
-														
-												
-												
+
 												</tbody>
 											</table>
 										</td>
 	
-	
-	
-	
-	
-	
-	
-	
-											
-										
-										
-										
-										
-										
-										
-										
-										
-										
-										
-										
 										{% else %}
 						
-													
-								
 										<td class="peopleJoinedTable">
 											<table class="table table-hover" id='peoplesorders'>
 												<thead>
@@ -528,7 +461,7 @@
 																{% if person_joined.first_name %}
 																	{{person_joined.first_name}} {{person_joined.last_name}}
 																{% else %}
-																	{{ person_joined.username }}
+																	{{ person_joined.username }} 
 																{% endif %}														
 															
 															{% endif %}
@@ -659,13 +592,8 @@
 															<h2 align="center">
 																<script> document.write(total)	</script>
 															</h2>
-														</td>
-														
-														
+														</td>							
 													</tr>
-						
-					
-
 
 													{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
 													<tr>
@@ -677,10 +605,9 @@
 															</div>								
 														</td>									
 													</tr>	
-				
+
 													{%  elif user.username  == person_joined.username and order.status == -1 %}
-													
-												
+
 													<tr>
 													<td colspan="5" class="leaveOrderButton">
 														<div class="form-group">
@@ -691,19 +618,12 @@
 													</td>									
 													</tr>												
 													{% endif %}
-
-
-													
-													
-													
-													
-													
+	
 												{% endfor %}
 
 													{% if orders %}
 													{% for order2 in orders %}
-													
-													 
+
 													{% if user != order2.creator and user not in order2.people_joined.all and order2.status  == -1 and order2 == order and not order.date_created|timesince|subtract:order.timeLimit %}
 													<tr>
 													<td colspan="5" class="joinOrderClass">
@@ -741,26 +661,10 @@
 													
 													{% endif %}
 																						
-															
-													
-													
 													{% endif %}
 												</tbody>
 											</table>
 										</td>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 										{% endif %}											
 										<td class="peopleJoinedShort">
@@ -769,7 +673,7 @@
 													You
 												{% else %}
 																						
-													{% if user.first_name %}
+													{% if order.creator.first_name %}
 														{{order.creator.first_name}} {{order.creator.last_name}}
 													{% else %}
 														{{order.creator.username}}
@@ -791,16 +695,6 @@
 									</tr>
 								
 									<tr><td colspan="7"></td></tr>
-
-								
-								
-								
-								
-								
-
-
-
-
 									
 								{% endfor %}
 								{% endif %}
@@ -815,7 +709,6 @@
 		<!-- /.container -->
 	<br><br><br>
 	</body>
-	
 
 	
 	{% endblock %}
