@@ -134,7 +134,7 @@ def addmeal(request):
 	print mealPrice
 	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
 	newM.save()
-	if order.creator.username!= suSer.username:
+	if order.creator.username!= sUser.username:
 		n = Notification(user = order.creator, status=3, from_user=sUser.username)
 		n.save()
 	print newM.id
