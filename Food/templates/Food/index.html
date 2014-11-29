@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load app_filters %}
+
 <!DOCTYPE html>
 <html lang="en">
 	<head>
@@ -43,7 +45,7 @@
 					<span class="icon-bar"></span>
 					</button>
 					<a class="navbar-brand" href="#">
-					<img id="logo" src="{% static 'Food/images/foodpal_logo.png' %}" alt="">
+					<img id="logo" src="{% static 'Food/images/foodpal_logo_white.png' %}" alt="">
 					</a>
 				</div>
 				<!-- Collect the nav links, forms, and other content for toggling -->
@@ -66,8 +68,8 @@
 				<!-- /.navbar-collapse -->
 			</div>
 			<!-- /.container -->
-			<div class = "alerts"></div>
 		</nav>
+		<div class = "alerts"></div>
 		<!-- Page Content -->
 		<div id = "background">
 		<br>
@@ -77,9 +79,9 @@
 		<br>
 		<div class="container">
 			{% if user.first_name %}
-			<h1> Welcome back, {{user.first_name}}.</h1>
+			<h1> Welcome back, {{user.first_name}}!</h1>
 			{% else %}
-			<h1> Welcome back, {{user.username}}.</h1>
+			<h1> Welcome back, {{user.username}}!</h1>
 			{% endif %} 
 			<br><br><br>
 			<div class="row">
@@ -296,7 +298,7 @@
 							<tbody>
 								{% if orders %}
 								{% for order in orders %}
-								<tr class='orderrowclass'>
+								<tr class='orderrowclass' id="{{order.id}}">
 									<td> 
 										{% if order.dineIn  %} 
 										Dine Out
@@ -307,7 +309,7 @@
 									<td>{{order.restaurant}}</td>
 									<td>{{order.location}}</td>
 									<td> 
-										<div class="timerDivs">
+										<div class="timerDivs" id="{{order.id}},{{order.status}}">
 										{{order.date_created | timesince }}, {{order.timeLimit}}
 										</div> 
 										<div>
@@ -336,7 +338,6 @@
 													<td> 
 														{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
 														Me (Owner)
-														
 														{% elif person_joined.username == order.creator.username %}
 														
 															{% if user.first_name %}
@@ -351,7 +352,7 @@
 															{% if person_joined.first_name %}
 																{{person_joined.first_name}} {{person_joined.last_name}}
 															{% else %}
-																{{ person_joined.username }} (Owner)
+																{{ person_joined.username }}
 															{% endif %}														
 														
 														{{person_joined.first_name}} {{person_joined.last_name}}
@@ -493,13 +494,13 @@
 
 												{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
 												<tr>
-												<td colspan="5" class="leaveOrderButton">
-													<div class="form-group">
-													  <div class="col-md-14">
-														<button id="leaveOrderButton" onclick="deleteOrder(this,'{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
-													  </div>
-													</div>								
-												</td>									
+													<td colspan="5" class="leaveOrderButton" id = "deleteOrderDiv">
+														<div class="form-group">
+														  <div class="col-md-14">
+															<button id="leaveOrderButton" onclick="deleteOrder(this,'{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
+														  </div>
+														</div>								
+													</td>									
 												</tr>	
 			
 												{%  elif user.username  == person_joined.username and order.status == -1 %}
@@ -524,16 +525,22 @@
 												
 											{% endfor %}
 
-												{% if user.order_set.all.count  == 0 %}
+												{% if orders %}
+												{% for order2 in orders %}
+												
+												 
+												{% if user != order2.creator and user not in order2.people_joined.all and order2.status  == -1 and order2 == order and not order.date_created|timesince|subtract:order.timeLimit %}
 												<tr>
 												<td colspan="5" class="joinOrderClass">
 													<div class="form-group">
 													  <div class="col-md-14">
-														<button id="joinButton" onclick="joinOrder('{{order.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
+														<button id="joinButton" onclick="joinOrder('{{order2.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
 													  </div>
 													</div>								
 												</td>									
 												</tr>
+												{% endif %}
+												{% endfor %}
 												{% endif %}
 																				
 												{% if user.username  == order.creator.username and order.status == 0 %}
@@ -541,13 +548,24 @@
 												<td colspan="5" id="orderArrivedD">
 													<div class="form-group">
 													  <div class="col-md-14">
-														<button id="orderArrivedB" onclick="orderArrived('{{order.id}}')" class="btn btn-info">Order Arrived</button>
+														<button id="orderArrivedB" onclick="orderArrived(this, '{{order.id}}')" class="btn btn-info">Order Arrived</button>
 													  </div>
 													</div>								
 												</td>									
 												</tr>
+												{% elif user.username  == order.creator.username and order.status == -1 %}
+												<tr>
+												<td colspan="5" id="orderArrivedD" style="display: none;">
+													<div class="form-group">
+													  <div class="col-md-14">
+														<button id="orderArrivedB" onclick="orderArrived(this, '{{order.id}}')" class="btn btn-info">Order Arrived</button>
+													  </div>
+													</div>								
+												</td>									
+												</tr>												
+												
 												{% endif %}
-																				
+																					
 														
 												
 												

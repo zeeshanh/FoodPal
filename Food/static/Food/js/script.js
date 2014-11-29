@@ -11,10 +11,23 @@ function hasOrderArrived(){
         type: "GET",
         url: "/Food/hasOrderArrived",
         success: function(data) {
-            if (data == 1){
+
+            if (data >= 1){
+				// alert(data) 
+				constructID =data+",-1"
+				var x=document.getElementById(constructID);
+				x.innerHTML = "Arrived"
+				// alert(constructID)
+				// alert($(constructID).html()	)
+				// alert($(constructID).next().html()	)
+				// $(constructID).next().html()			
+			
                 $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
                 var tone = document.getElementById("tone"); 
                 tone.play();
+				if (document.getElementById("leaveOrderButton") != null)
+					document.getElementById("leaveOrderButton").style.display = "none";				
+				
                 if (window.navigator && window.navigator.vibrate) {
                     navigator.vibrate([1000, 500, 1000, 500, 2000]);
                 } else {
@@ -31,16 +44,23 @@ function hasOrderArrived(){
     });
 }
 
-function orderArrived(orderId){
+function orderArrived(v, orderId){
     console.log("pressed arrived " + orderId);
+	
     $.ajax({
         type: "GET",
         url: "/Food/orderArrived",
         data: "data="+orderId,
         success: function(data) {
+		// (data);
             if (data == 1){
                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your friends will be notified that their food has arrived!</strong></p></div>");
                 console.log("Done");
+				jQuery(v).closest("tbody").parent().parent().parent().find(".timerDivs").parent().html("Arrived");
+				jQuery(v).hide();
+				
+				
+				
             }
         }
     });
@@ -51,7 +71,7 @@ function removeNotification(){
 }
 
 function viewmyorders(){
-     if ($("#openAllOrders").html() == "Close Orders »") {
+     if ($("#openAllOrders").html() == "Close Orders") {
         // alert('ads');
         $("#openAllOrders").html("Open Orders")
         $("#ordertable").hide()
@@ -112,12 +132,14 @@ function addorder() {
     restaurant = $("#restaurantselector").find(":selected").text();
     data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit;
 	var url = location.href.replace( '/#', '') + '/neworder/'
+    var url = location.href.replace( 'section2', '') + '/neworder/'
 	
     $.ajax({
         type: "GET",
         url: url,
         data: data,
         success: function(data) {
+			// alert(data)
 			if (data == 1) 
 				window.location.reload();
 			else if (data == -1)
@@ -157,7 +179,7 @@ function deleteOrder(v, oid) {
         url: "/Food/deleteOrder/",
         data: "oid=" + oid,
         success: function(data) {
-			jQuery(v).closest(".orderrowclass")[0].remove()
+			document.getElementById(oid).style.display = "none";
 		}  
     });
 
@@ -168,8 +190,8 @@ $(document).ready(function() {
 
     document.getElementById("neworderform").style.display = "none";
     document.getElementById("ordertable").style.display = "none";
-	if (document.getElementById("orderArrivedD") != null)
-		document.getElementById("orderArrivedD").style.display = "none";
+	// if (document.getElementById("orderArrivedD") != null)
+		// document.getElementById("orderArrivedD").style.display = "none";
 		document.getElementById("myorders").style.display = "none";
 	if (document.getElementById("createMealForm") != null)
 		document.getElementById("createMealForm").style.display = "none";
@@ -229,7 +251,7 @@ $(document).ready(function() {
 		setTimer(i)
 	}
 
-    setInterval(hasOrderArrived, 30000);
+    setInterval(hasOrderArrived, 3000);
     hasOrderArrived();
 	
 	 $('.myorders1 th:nth-child(' + 5 + '), #myorders1 td:nth-child(' + 5 + ')').hide();
@@ -294,6 +316,7 @@ function addMeal(v, pj, oid) {
     var newTotal = parseInt(current) + (price * count)
 
     var url = location.href.replace( '/#', '')
+    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/addmeal/',
@@ -353,6 +376,7 @@ function addRemove(t, a) {
 
 function removeMeal(t, mid) {
 	var url = location.href.replace( '/#', '')
+    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/removeMeal/',
@@ -380,6 +404,7 @@ function createMealButtonF(t, restaurant) {
 	// alert(mealName);
 	// alert(mealPrice);
     var url = location.href.replace( '/#', '')
+    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/createNewMeal/',
@@ -414,17 +439,13 @@ function setTimer(i) {
     // alert($(".timerDivs").eq(i).next().html())
     // alert($(".timerDivs").eq(i).next().html().indexOf("On the way"))
     var elems = document.getElementsByClassName('timerDivs');
-
-    if ($(".timerDivs").eq(i).next().html().indexOf("On the way") > -1) {
-		// alert('asd');
+	oidAndStatus = elems[i].id.split(",")
+	// If order is not open 
+	if (oidAndStatus[1] == "1" || oidAndStatus[1] == "0") {
 		$(".timerDivs").eq(i).html("")
 		return;
 	};
-    // if ($(".timerDivs").eq(i).next().html().indexOf("Arrived") > -1) {
-		// alert('asd');
-		// $(".timerDivs").eq(i).html("")
-		// return;
-	// };	
+
 
 	// alert(elems[i].innerHTML);
 	var length = elems[i].innerHTML.split(', ').length
@@ -450,39 +471,31 @@ function setTimer(i) {
 
 	  if (count <= 0)
 	  {
-		// alert(elems[i].innerHTML)
 		clearInterval(counter);
 		elems[i].innerHTML = "On the way"
-		$("#orderArrivedD").show(); 
-		// if (
-		// alert($(".timerDivs").eq(i))
-		// alert($(".timerDivs").eq(i).closest("#newMealRow").length)
+		$("#orderArrivedD").show(); 	
 		
-		
-		
+		if (document.getElementById("deleteOrderDiv") != null)
+			document.getElementById("deleteOrderDiv").style.display = "none";
 		// if ($('.timerDivs :has(#newMealRow)').length > 0)
 			// alert("ASD");
 		var a = $('#newMealRow').parent().parent().parent().parent().parent().parent().parent().prev().first().children().first().html()
 		var b = elems[i].innerHTML
 		if (document.getElementById("newMealRow") != null && a == b)
 			document.getElementById("newMealRow").style.display = "none";		
-		
-		
-		
-		
-		// AJAX CALL UPDATES STATUS	
-	   // $.ajax({
-			// type: "GET",
-			// url: "/Food/orderTimeUp/",
-			// data: "oid=" + oid,
-			// success: function(data) {
-				// if (data == -1)
-					// alert('???')
-				// else 
-					// window.location.reload();
+		if (document.getElementById("leaveOrderButton") != null)
+			document.getElementById("leaveOrderButton").style.display = "none";				
+				
 
-			// }
-		// });
+		// AJAX CALL UPDATES STATUS	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	   $.ajax({
+			type: "GET",
+			url: "/Food/orderTimeUp/",
+			data: "oid=" + oidAndStatus[0],
+			success: function(data) {
+				alert('status updated');
+			}
+		});
 
 		
 		 return;
@@ -522,6 +535,7 @@ function createRestaurant() {
 		data = "restaurant=" + restaurant + "&restaurantWebsite=" + restaurantWebsite
 	}
     var url = location.href.replace( '/#', '')
+    var url = location.href.replace('section2', '')
     $.ajax({
         type: "GET",
         url: url + '/addNewRestaurant/',
@@ -563,6 +577,7 @@ function addLocation() {
 
 	data = "newLocation=" + newLocation;
 	var url = location.href.replace( '/#', '') + '/addNewLocation/'
+    var url = location.href.replace('section2', '')
    $.ajax({
         type: "GET",
         url: url,
