@@ -222,7 +222,7 @@ def joinOrder(request):
 		else:
 			return HttpResponse(order.creator)
 	order = Order.objects.filter(pk = oid)[0]
-	if order.people_joined.count() >= order.peopleLimit:
+	if order.isDineOut and order.people_joined.count() >= order.peopleLimit:
 		return HttpResponse(-3)
 	if (order.status >= 0):
 		return HttpResponse("Bad request!")
@@ -316,12 +316,3 @@ def orderTimeUp(request):
 	order.save()
 	return HttpResponse(1)
 
-def isPartOfOrder(request):
-	oid = request.GET['oid']
-	order = Order.objects.filter(pk = oid)[0]
-	username = request.GET['username']
-	people = order.people_joined.all()
-	for person in people:
-		if person.username == username:
-			return HttpResponse(1)
-	return HttpResponse(-1)
