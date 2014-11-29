@@ -481,7 +481,7 @@ function setTimer(i) {
 	  {
 		clearInterval(counter);
         if(aaa >0){
-            $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Reminder! You are supposed to meet up with " + from_user + " to dine out now. Click to update and see who else is coming!</a></strong></p></div>");
+            $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Reminder! You are supposed to got to the meet up location to dine out now. Click to update and see who else is coming!</a></strong></p></div>");
             if (window.navigator && window.navigator.vibrate) {
                     navigator.vibrate(1000);
             }
