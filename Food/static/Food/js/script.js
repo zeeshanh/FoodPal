@@ -586,7 +586,7 @@ function joinOrder(oid) {
         data: "oid=" + oid,
         success: function(data) {
 			if (data == -1)
-				alert('')
+				alert('You are already part of another order!')
 			else 
 				window.location.reload();
         }
