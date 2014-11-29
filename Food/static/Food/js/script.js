@@ -43,6 +43,8 @@ function hasOrderArrived(){
                 } else {
                     console.log("Cant vibrate");
                 }
+
+                tone.play();
             }
             else if (status == "-2"){
                 $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Your order has been cancelled by its creator!</a></strong></p></div>");
@@ -483,6 +485,7 @@ function setTimer(i) {
                     if (window.navigator && window.navigator.vibrate) {
                     navigator.vibrate(1000);
                     }
+                    var tone = document.getElementById("tone"); 
                     tone.play();
                 }   
             }
