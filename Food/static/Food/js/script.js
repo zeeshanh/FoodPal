@@ -533,8 +533,6 @@ function setTimer(i) {
 			elems[i].innerHTML = ts
 	}
 	timer();
-	
->>>>>>> f2fb42ef1107a36d6762a5aae624926e30098297
 }
 
 // $("#myorders1 > thead th:nth-child(0)").hide();
