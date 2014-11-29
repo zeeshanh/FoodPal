@@ -1,12 +1,8 @@
-<<<<<<< HEAD
+
 /*Background image taken from
 http://img2.wikia.nocookie.net/__cb20131204233125/whatever-you-want/images/e/e0/Hd-food-wallpaperswallpapers-foods-pizza-food-hd-1920x1200-s8uotxhd.jpg
 */
 
-var openForm;
-
-=======
->>>>>>> 95841764a0b1ff75d326ef5993e1a830a617bf65
 function logoutuser() {
     location.href = "logoutv/"
 }
