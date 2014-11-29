@@ -528,7 +528,7 @@
 																{% if person_joined.first_name %}
 																	{{person_joined.first_name}} {{person_joined.last_name}}
 																{% else %}
-																	{{ person_joined.username }}
+																	{{ person_joined.username }} 
 																{% endif %}														
 															
 															{% endif %}
@@ -769,7 +769,7 @@
 													You
 												{% else %}
 																						
-													{% if user.first_name %}
+													{% if order.creator.first_name %}
 														{{order.creator.first_name}} {{order.creator.last_name}}
 													{% else %}
 														{{order.creator.username}}

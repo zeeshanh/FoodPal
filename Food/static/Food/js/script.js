@@ -228,8 +228,9 @@ function leaveOrder(v, oid) {
         url: "leaveOrder/",
         data: "oid=" + oid, 
         success: function(data) {
-			jQuery(v).parent().parent().parent().parent().prev().remove();
-			jQuery(v).remove();
+			// jQuery(v).parent().parent().parent().parent().prev().remove();
+			// jQuery(v).remove();
+			window.location.reload();
 		}  
     });
 }
