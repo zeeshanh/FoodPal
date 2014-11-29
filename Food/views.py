@@ -204,6 +204,8 @@ def leaveOrder(request):
 		meal.delete()	
 	sUser = User.objects.filter(username = request.user.username)[0]
 	order.people_joined.remove(sUser)
+	creator = order.creator
+	n = Notification(user = creator, status = -3)
 	return redirect('index')
 	
 # recurse and delete all associated meals and people_joined

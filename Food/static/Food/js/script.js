@@ -53,9 +53,9 @@ function removeNotification(){
 function viewmyorders(){
      if ($("#openAllOrders").html() == "Close Orders »") {
         // alert('ads');
-        $("#openAllOrders").html("Open Orders »")
+        $("#openAllOrders").html("Open Orders")
         $("#ordertable").hide()
-        $("#neworderbutton").html("Cancel Order »")
+        $("#neworderbutton").html("Cancel Order")
         $("#neworderform").fadeIn("fast")
         return;
     }
@@ -65,20 +65,20 @@ function viewmyorders(){
 }
 
 function neworderrollout() {
-    if ($("#openAllOrders").html() == "Close Orders »") {
+    if ($("#openAllOrders").html() == "Close Orders") {
 		// alert('ads');
-        $("#openAllOrders").html("Open Orders »")
+        $("#openAllOrders").html("Open Orders")
         $("#myorders").hide()
-        $("#neworderbutton").html("Cancel Order »")
+        $("#neworderbutton").html("Cancel Order")
         $("#neworderform").fadeIn("fast")
 		return;
 	}
 
-    if ($("#neworderbutton").html() == "Cancel Order »") {
-        $("#neworderbutton").html("New Order »")
+    if ($("#neworderbutton").html() == "Cancel Order") {
+        $("#neworderbutton").html("New Order")
         $("#neworderform").fadeOut("fast")
     } else {
-        $("#neworderbutton").html("Cancel Order »")
+        $("#neworderbutton").html("Cancel Order")
         $("#neworderform").fadeIn("fast")
     }
 	$("#addLocationDiv").hide();
@@ -90,16 +90,16 @@ function neworderrollout() {
 function viewAllOrders() {
 	$("#addLocationDiv").hide();
 	$("#addRestaurantDiv").hide();
-    if ($("#neworderbutton").html() == "Cancel Order »") {
-        $("#neworderbutton").html("New Order »")
+    if ($("#neworderbutton").html() == "Cancel Order") {
+        $("#neworderbutton").html("New Order")
         $("#neworderform").hide()
 		$("#myorders").fadeIn("fast")
 	}
-    if ($("#openAllOrders").html() == "Close Orders »") {
-        $("#openAllOrders").html("Open Orders »")
+    if ($("#openAllOrders").html() == "Close Orders") {
+        $("#openAllOrders").html("Open Orders")
         $("#myorders").fadeOut("fast")
     } else {
-        $("#openAllOrders").html("Close Orders »")
+        $("#openAllOrders").html("Close Orders")
         $("#myorders").fadeIn("fast")
     }
 	
