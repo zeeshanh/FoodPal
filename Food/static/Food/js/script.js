@@ -597,10 +597,12 @@ function joinOrder(oid) {
         url: "joinOrder/",
         data: "oid=" + oid,
         success: function(data) {
-			if (data == -1)
-				alert('You are already part of another order!')
-			else 
-				window.location.reload();
+            if (data == -1)
+                window.location.reload();
+            else if (data == 1)
+                alert("To join this order, please cancel yours first.");
+            else 
+                alert("To join this order, please leave " + data + "'s order first.");
         }
-    });		
-}	
+    });     
+}
