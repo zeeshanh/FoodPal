@@ -28,9 +28,11 @@ function hasOrderArrived(){
             #2: joinedOrder
             #3: mealAdded
             #4: new order created
+            #5: dine out time completed
             #-3:left order
             #-2: order cancelled
-            #-4: removed meal*/
+            #-4: removed meal
+            */
             var tone = document.getElementById("tone"); 
 			
             if(status == "1"){
@@ -478,8 +480,15 @@ function setTimer(i) {
 	  if (count <= 0)
 	  {
 		clearInterval(counter);
-		if (aaa > 0)
-			elems[i].innerHTML = "Completed"
+        if(aaa >0){
+            $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Reminder! You are supposed to got to the meet up location to dine out now. Click to update and see who else is coming!</a></strong></p></div>");
+            if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+            }
+            tone.play();
+
+            elems[i].innerHTML = "Completed"
+        }	
 		else 
 			elems[i].innerHTML = "On the way"
 		$("#orderArrivedD").show(); 	
@@ -524,7 +533,6 @@ function setTimer(i) {
 			elems[i].innerHTML = ts
 	}
 	timer();
-	
 }
 
 // $("#myorders1 > thead th:nth-child(0)").hide();
