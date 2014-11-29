@@ -1,4 +1,7 @@
-var isSomethingVisible;
+/*Background image taken from
+http://img2.wikia.nocookie.net/__cb20131204233125/whatever-you-want/images/e/e0/Hd-food-wallpaperswallpapers-foods-pizza-food-hd-1920x1200-s8uotxhd.jpg
+*/
+
 var openForm;
 
 function logoutuser() {
@@ -22,16 +25,6 @@ function hasOrderArrived(){
                 oid = parseInt(data[2])
             }
             
-            if (oid >1){
-				constructID =oid+",-1"
-				var x=document.getElementById(constructID);
-				x.innerHTML = "Arrived"
-				// alert(constructID)
-				// alert($(constructID).html()	)
-				// alert($(constructID).next().html()	)
-				// $(constructID).next().html()	
-            }	
-            
 
             /*status 
             #1: orderArrived
@@ -43,7 +36,7 @@ function hasOrderArrived(){
             #-4: removed meal*/
 			
             if(status == "1"){
-                $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>Your order has arived!</strong></p></div>");
+                $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Your order has arived!</a></strong></p></div>");
                 var tone = document.getElementById("tone"); 
                 tone.play();
 				if (document.getElementById("leaveOrderButton") != null)
@@ -58,33 +51,43 @@ function hasOrderArrived(){
 
             else if (status == "-2"){
                 console.log("Order cancelled")
-                $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>Your order has been cancelled by its creator!</strong></p></div>");
+                $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Your order has been cancelled by its creator!</a></strong></p></div>");
             }
 
             else if (status == "4"){
                 console.log("Order created");
-                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>A new order has been created by " + from_user + "!</strong></p></div>");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>A new order has been created by " + from_user + ".Click to update orders!</a></strong></p></div>");
             }
 
             else if (status == "2"){
                 console.log("Joined order");
-                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>" + from_user + " just joined your order! "+ "</strong></p></div>");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>" + from_user + " just joined your order. Click to refresh!</a></strong></p></div>");
             }
 
             else if (status == "3"){
                 console.log("Joined order");
-                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>A new meal has been added by " + from_user + " to your order! "+ "</strong></p></div>");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>A new meal has been added by " + from_user + " to your order. Click to refresh!"+ "</a></strong></p></div>");
             }
 
             else if (status == "-3"){
                 console.log("Joined order");
-                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>" + from_user + " just left your order!"+ "</strong></p></div>");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>" + from_user + " just left your order."+ "Click to refresh!</a></strong></p></div>");
             }
 
             else if (status == "-4"){
                 console.log("Joined order");
-                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>A meal has been removed from your order</strong></p></div>");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>A meal has been removed from your order. Click to refresh!</a></strong></p></div>");
             }
+
+            if (oid >1){
+                constructID =oid+",-1"
+                var x=document.getElementById(constructID);
+                x.innerHTML = "Arrived"
+                // alert(constructID)
+                // alert($(constructID).html()  )
+                // alert($(constructID).next().html()   )
+                // $(constructID).next().html() 
+            }   
         }
     });
 }
@@ -298,7 +301,6 @@ $(document).ready(function() {
     setInterval(hasOrderArrived, 3000);
 	
 	 $('.myorders1 th:nth-child(' + 5 + '), #myorders1 td:nth-child(' + 5 + ')').hide();
-	
 })
 
 function showDetails(v) {

@@ -7,6 +7,15 @@ body {
   color: #FFFFFF;
 }
 
+.btn-primary {
+  border-color: rgba(255,255,255,0);
+  background-color: rgb(234,43,50);
+}
+
+.btn-primary:hover {
+  border-color: rgba(255,255,255,0);
+  background-color: rgb(232,29,37);
+}
 
 .form-signin {
   max-width: 330px;

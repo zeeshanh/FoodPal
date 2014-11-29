@@ -52,15 +52,6 @@
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style = "float:right">
 					<ul class="nav navbar-nav">
 						<li>
-							<a href="#">About</a>
-						</li>
-						<li>
-							<a href="#">Services</a>
-						</li>
-						<li>
-							<a href="#">Contact</a>
-						</li>
-						<li>
 							<a  href="#" id="logoutid" id="logoutb" type="submit"  onclick="logoutuser()"  > Logout</a>
 						</li>
 					</ul>
@@ -86,19 +77,19 @@
 			<br><br><br>
 			<div class="row">
 				<div class="col-lg-4 md">
-					<img class="img-circle" src="{% static 'Food/images/order2.jpg' %}"alt="Generic placeholder image" style="width: 200px; height: 200px;">
+					<img class="img-circle" src="{% static 'Food/images/openOrders.png' %}"alt="Generic placeholder image" style="width: 200px; height: 200px;">
 					<h3>View open Orders.</h3>
 					<p><a class="btn btn-primary" href="#" role="button" id='openAllOrders' onclick="viewAllOrders()"> Open Orders</a></p>
 				</div>
 				<!-- /.col-lg-4 -->
 				<div class="col-lg-4 md">
-					<img class="img-circle"  src="{% static 'Food/images/order1.jpg' %}"  alt="Generic placeholder image" style="width: 200px; height: 200px;">
+					<img class="img-circle"  src="{% static 'Food/images/addOrder.png' %}"  alt="Generic placeholder image" style="width: 200px; height: 200px;">
 					<h3 id="orderheader"> Make a new Order. </h3>
 					<p><a class="btn btn-primary" href="#" id='neworderbutton' role="button" onclick="neworderrollout()">New Order</a></p>
 				</div>
 				<!-- /.col-lg-4 -->
  				<div class="col-lg-4 md">
-					<img class="img-circle" src="{% static 'Food/images/order3.jpg' %}" alt="Generic placeholder image" style="width: 200px; height: 200px;">
+					<img class="img-circle" src="{% static 'Food/images/addOrder.png' %}" alt="Generic placeholder image" style="width: 200px; height: 200px;">
 					<h3>Make a new Dine Out.</h3>
 					<p><a class="btn btn-primary" href="#" role="button">New Dine Out</a></p>
 				</div>
