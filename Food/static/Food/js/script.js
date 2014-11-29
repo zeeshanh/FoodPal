@@ -135,7 +135,7 @@ function addorder() {
 	
     $.ajax({
         type: "GET",
-        url: url,
+        url: "/Food/neworder/",
         data: data,
         success: function(data) {
 			// alert(data)
