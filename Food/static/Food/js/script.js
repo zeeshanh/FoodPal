@@ -527,6 +527,7 @@ function createRestaurant() {
 	}	
     restaurantWebsite = $("#createRestaurantSiteBox").val();
 	var data;
+	alert(restaurantWebsite)
 	if (restaurantWebsite=="") {
 		data = "restaurant=" + restaurant + "&restaurantWebsite=0"
 	} else {
@@ -610,9 +611,11 @@ function joinOrder(oid) {
         data: "oid=" + oid,
         success: function(data) {
 			if (data == -1)
-				alert('You are already part of another order!')
-			else 
 				window.location.reload();
+			else if (data == 1)
+				alert("To join this order, please cancel yours first.");
+			else 
+				alert("To join this order, please leave " + data + "'s order first.");
         }
     });		
 }	

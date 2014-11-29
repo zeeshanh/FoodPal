@@ -32,7 +32,7 @@ from Food.models import Notification
 
 
 # Create your views here.
-@login_required(login_url='/Food/login/')
+@login_required(login_url='login/')
 def index(request):
 	restaurants = Restaurant.objects.all()
 	locations = Location.objects.all() 
@@ -42,7 +42,7 @@ def index(request):
 					context_instance=RequestContext(request))
 			
 			
-@login_required(login_url='/Food/login/')
+@login_required(login_url='login/')
 def logoutv(request):
 	logout(request)
 	return redirect('index')
@@ -58,7 +58,6 @@ def register_user(request):
 	args['form'] = UserCreationForm()
 	return render_to_response('Food/signup.html', args)	
 
-@login_required(login_url='/Food/login/')
 def neworder(request):
 	restaurant= request.GET['restaurant']
 	location= request.GET['location']
@@ -80,7 +79,6 @@ def neworder(request):
 				 creator = sUser,\
 				 location = sLocation,\
 				 restaurant = sRestaurant)
-	print 'here111111111111111111111'
 	print newO.id
 	newO.save()
 	newO.people_joined.add(sUser)
@@ -93,7 +91,6 @@ def neworder(request):
 	# print 'here2'
 	return HttpResponse(1) 
 	
-@login_required(login_url='/Food/login/')
 def newdineout(request):
 	restaurant= request.GET['restaurant']
 	location= request.GET['location']
@@ -116,7 +113,6 @@ def newdineout(request):
 	print 'here2'
 	return HttpResponse(1) 
 	
-@login_required(login_url='/Food/login/')
 def addmeal(request):
 	mealName = request.GET['mealName']
 	count = request.GET['count']
@@ -138,33 +134,27 @@ def addmeal(request):
 	print mealPrice
 	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
 	newM.save()
-
 	if order.creator.username!= suSer.username:
 		n = Notification(user = order.creator, status=3, from_user=sUser.username)
 		n.save()
-
 	print newM.id
 	return HttpResponse(newM.id) 	
   		
-@login_required(login_url='/Food/login/')
 def removeMeal(request):
 	mID = request.GET['mealID']
 	m = Meal.objects.filter(id = mID)[0]
 	order = m.order
 	creator = order.creator
-
 	if m.owner != request.user:
 		return HttpResponse("Bad request!")
 	elif m.order.status != -1:
 		return HttpResponse("Bad request!")
 	m.delete()
-
 	if order.creator.username!= suSer.username:
 		n = Notification(user = creator, status = -4, from_user = "")
 		n.save()
 	return HttpResponse(1)
 
-@login_required(login_url='/Food/login/')
 def createNewMeal(request):
 	mealName = request.GET['mealName']
 	restaurant = request.GET['restaurant']
@@ -174,10 +164,8 @@ def createNewMeal(request):
 		return HttpResponse(-1)
 	newM = Meal(name = mealName, price = int(strip_tags(mealPrice)), restaurant = sRestaurant) 
 	newM.save()	
-
 	return HttpResponse(3) 
 	
-@login_required(login_url='/Food/login/')
 def addNewRestaurant(request):
 	validate = URLValidator()
 	restaurant = request.GET['restaurant']
@@ -196,7 +184,6 @@ def addNewRestaurant(request):
 	newR.save()
 	return HttpResponse(4)
 	
-@login_required(login_url='/Food/login/')
 def addNewLocation(request):
 	newLocation = request.GET['newLocation']
 	if (Location.objects.filter(name = strip_tags(newLocation)).count() > 0):
@@ -206,27 +193,28 @@ def addNewLocation(request):
 	newL.save()
 	return HttpResponse(5)
 
-@login_required(login_url='/Food/login/')
 def joinOrder(request):
 	oid = request.GET['oid']
 	sUser = User.objects.filter(username = request.user.username)[0]
 
 	# Already in another order or has created an order
 	if (Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0).count() > 0):
-		return HttpResponse(-1)
+		order = Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0)[0]
+		if order.creator == request.user:
+			return HttpResponse(1)
+		else:
+			return HttpResponse(order.creator)
 	order = Order.objects.filter(pk = oid)[0]
 	if (order.status >= 0):
 		return HttpResponse("Bad request!")
 	n = Notification(user = order.creator, status = 2, from_user = sUser.username)
 	n.save()
 	order.people_joined.add(sUser)
-	return redirect('index')
+	return HttpResponse(-1)
 
-@login_required(login_url='/Food/login/')
 def hasOrderArrived(request):
     sUser = User.objects.filter(username = request.user.username)[0]
     order = Order.objects.filter(people_joined__username__contains = sUser.username).order_by('-date_created')
-    
     notifications = Notification.objects.filter(user = sUser)
     if len(notifications) == 0:
     	return HttpResponse(-1);
@@ -242,7 +230,6 @@ def hasOrderArrived(request):
     	return HttpResponse(response)
 
 #delete all meals
-@login_required(login_url='/Food/login/')
 def leaveOrder(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
@@ -258,7 +245,6 @@ def leaveOrder(request):
 	return redirect('index')
 	
 # recurse and delete all associated meals
-@login_required(login_url='/Food/login/')
 def deleteOrder(request):
 	oid = request.GET['oid']
 	if  Order.objects.filter(pk = oid).count() == 0:
@@ -285,7 +271,6 @@ def deleteOrder(request):
 	return redirect('index')
 	
 		
-@login_required(login_url='/Food/login/')
 def orderArrived(request):
 	print "here"
 	orderId = request.GET['data']
@@ -300,7 +285,6 @@ def orderArrived(request):
 			n.save()
 	return HttpResponse(1)
 	
-@login_required(login_url='/Food/login/')
 def orderTimeUp(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
