@@ -17,7 +17,7 @@
     <title>Signin Template for Bootstrap</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../Food/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="{% static 'Food/css/signin.css' %}" rel="stylesheet">
@@ -34,14 +34,14 @@
   </head>
 
   <body>
-                   <div id="ld2"> <img id="logo2" src="{% static 'Food/images/logo2.png' %}" alt="">
+                   <div id="ld2"> <img id="logo2" src="{% static 'Food/images/foodpal_logo_white.png' %}" alt="">
 					</div>
     <div class="container">
 
       <form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login'  %}">
 	  {% csrf_token %}
 
-        <h2 class="form-signin-heading">Please sign in</h2>
+        <h2 style = "text-align:center" class="form-signin-heading">Please sign in</h2>
 
 		<input class="form-control"  placeholder="Username" type="text" name="username"/>
 		<input class="form-control"  placeholder="Password" type="password" name="password"/>

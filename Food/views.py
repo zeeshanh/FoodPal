@@ -85,6 +85,12 @@ def neworder(request):
 	print newO.id
 	newO.save()
 	newO.people_joined.add(sUser)
+
+	people = User.objects.all()
+	for person in people:
+		if person.username != sUser.username:
+			n = Notification(user = person, status = 4, from_user = sUser.username)
+			n.save()
 	# print 'here2'
 	return HttpResponse(1) 
 	
@@ -133,21 +139,37 @@ def addmeal(request):
 	print mealPrice
 	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
 	newM.save()
+<<<<<<< HEAD
 	print "AAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 	print newM.id 
 	return HttpResponse(newM.id) 
+=======
+>>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
 
-	
+	n = Notification(user = order.creator, status=3, from_user=sUser.username)
+	n.save()
+
+	print newM.id
+	return HttpResponse(newM.id) 	
   		
 @login_required(login_url='/Food/login/')
 def removeMeal(request):
 	mID = request.GET['mealID']
+<<<<<<< HEAD
 	meal = Meal.objects.filter(id = mID)[0]
 	if meal.owner != request.user:
 		return HttpResponse("Bad request!")
 	elif meal.order.status != -1:
 		return HttpResponse("Bad request!")
 	meal.delete()
+=======
+	m = Meal.objects.filter(id = mID)[0]
+	order = m.order
+	creator = order.creator
+	m.delete()
+	n = Notification(user = creator, status = -4, from_user = "")
+	n.save()
+>>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
 	return HttpResponse(1)
 
 @login_required(login_url='/Food/login/')
@@ -160,6 +182,7 @@ def createNewMeal(request):
 		return HttpResponse(-1)
 	newM = Meal(name = mealName, price = int(strip_tags(mealPrice)), restaurant = sRestaurant) 
 	newM.save()	
+
 	return HttpResponse(3) 
 	
 @login_required(login_url='/Food/login/')
@@ -200,28 +223,46 @@ def joinOrder(request):
 	if (Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0).count() > 0):
 		return HttpResponse(-1)
 	order = Order.objects.filter(pk = oid)[0]
+<<<<<<< HEAD
 	if (order.status >= 0):
 		return HttpResponse("Bad request!")
+=======
+	n = Notification(user = order.creator, status = 2, from_user = sUser.username)
+	n.save()
+>>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
 	order.people_joined.add(sUser)
 	return redirect('index')
 
 @login_required(login_url='/Food/login/')
 def hasOrderArrived(request):
     sUser = User.objects.filter(username = request.user.username)[0]
+<<<<<<< HEAD
     order = Order.objects.filter(people_joined__username__contains = sUser.username).order_by('-date_created')    
     # print sUser
+=======
+    order = Order.objects.filter(people_joined__username__contains = sUser.username).order_by('-date_created')
+    
+>>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
     notifications = Notification.objects.filter(user = sUser)
     if len(notifications) == 0:
     	return HttpResponse(-1);
     else:
+    	response = ""
     	status = notifications[0].status
+    	from_user = notifications[0].from_user
     	notifications[0].delete()
-    	numberToSend = status
+    	response = response + str(status) 
+    	response = response + "," + from_user 
     	if (order.count()>0):
+<<<<<<< HEAD
             numberToSend = order[0].id
         if (status == -2):
             numberToSend = status
     	return HttpResponse(numberToSend)
+=======
+            response = response + "," + str(order[0].id)
+    	return HttpResponse(response)
+>>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
 		
 #delete all meals
 @login_required(login_url='/Food/login/')
@@ -234,6 +275,9 @@ def leaveOrder(request):
 		meal.delete()	
 	sUser = User.objects.filter(username = request.user.username)[0]
 	order.people_joined.remove(sUser)
+	creator = order.creator
+	n = Notification(user = creator, status = -3, from_user = sUser.username)
+	n.save()
 	return redirect('index')
 	
 # recurse and delete all associated meals
@@ -254,7 +298,7 @@ def deleteOrder(request):
 	people = order.people_joined.all()
 	for person in people:
 		if person != order.creator:
-			n = Notification(user = person, status = order.status)
+			n = Notification(user = person, status = order.status, from_user = order.creator.username)
 			n.save()
 	allMealsCount = Meal.objects.filter(order = order).count()
 	for i in range(0, allMealsCount):
@@ -274,8 +318,8 @@ def orderArrived(request):
 	order.save()
 	people = order.people_joined.all()
 	for person in people:
-		if person != order.creator:
-			n = Notification(user = person, status = order.status)
+		if person.username != order.creator.username:
+			n = Notification(user = person, status = order.status, from_user = order.creator.username)
 			n.save()
 	return HttpResponse(1)
 	
