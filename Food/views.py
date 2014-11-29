@@ -222,6 +222,8 @@ def joinOrder(request):
 		else:
 			return HttpResponse(order.creator)
 	order = Order.objects.filter(pk = oid)[0]
+	if order.people_joined.count() >= order.peopleLimit:
+		return HttpResponse(-3)
 	if (order.status >= 0):
 		return HttpResponse("Bad request!")
 	n = Notification(user = order.creator, status = 2, from_user = sUser.username)
