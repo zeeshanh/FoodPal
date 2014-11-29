@@ -320,6 +320,8 @@ def isPartOfOrder(request):
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
 	username = request.GET['username']
+	if username == order.creator.username:
+		return HttpResponse(1)
 	people = order.people_joined.all()
 	for person in people:
 		if person.username == username:
