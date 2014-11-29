@@ -8,13 +8,6 @@ function hasOrderArrived(){
         type: "GET",
         url: "hasOrderArrived/",
         success: function(data) {
-<<<<<<< HEAD
-            if (data >= 1){
-				constructID =data+",-1"
-				var x=document.getElementById(constructID);
-				x.innerHTML = "Arrived"
-                $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
-=======
 
             console.log(data)
             data = data.split(",")
@@ -48,7 +41,6 @@ function hasOrderArrived(){
 			
             if(status == "1"){
                 $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>Your order has arived!</strong></p></div>");
->>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
                 var tone = document.getElementById("tone"); 
                 tone.play();
 				if (document.getElementById("leaveOrderButton") != null)
@@ -59,12 +51,8 @@ function hasOrderArrived(){
                     console.log("Cant vibrate");
                 }
             }
-<<<<<<< HEAD
-            else if (data == -2){
-=======
-
+			
             else if (status == "-2"){
->>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
                 console.log("Order cancelled")
                 $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>Your order has been cancelled by its creator!</strong></p></div>");
             }
@@ -140,14 +128,8 @@ function neworderrollout() {
         $("#neworderform").fadeIn("fast")
 		return;
 	}
-<<<<<<< HEAD
-    if ($("#neworderbutton").html() == "Cancel Order »") {
-        $("#neworderbutton").html("New Order »")
-=======
-
     if ($("#neworderbutton").html() == "Cancel Order") {
         $("#neworderbutton").html("New Order")
->>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
         $("#neworderform").fadeOut("fast")
     } else {
         $("#neworderbutton").html("Cancel Order")
@@ -188,11 +170,7 @@ function addorder() {
 	// var url = location.href.replace( '/#', '') + '/neworder/'
     $.ajax({
         type: "GET",
-<<<<<<< HEAD
 		url:  'neworder/',
-=======
-        url: "/Food/neworder/",
->>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
         data: data,
         success: function(data) {
 			if (data == 1) 
@@ -520,6 +498,7 @@ function createRestaurant() {
 	}	
     restaurantWebsite = $("#createRestaurantSiteBox").val();
 	var data;
+	alert(restaurantWebsite)
 	if (restaurantWebsite=="") {
 		data = "restaurant=" + restaurant + "&restaurantWebsite=0"
 	} else {
@@ -569,14 +548,7 @@ function addLocation() {
 		return
 	}	
 	data = "newLocation=" + newLocation;
-<<<<<<< HEAD
-	// var url = location.href.replace( '/#', '') + '//'
-	$.ajax({
-=======
-	var url = location.href.replace( '/#', '') + '/addNewLocation/'
-    console.log(url);
    $.ajax({
->>>>>>> b12c2486df026c55b55fd03aa29db812d9dfe7c9
         type: "GET",
         url:  'addNewLocation/',
         data: data,
