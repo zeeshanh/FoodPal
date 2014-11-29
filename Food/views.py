@@ -69,14 +69,22 @@ def neworder(request):
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
 	sUser = User.objects.filter(username = request.user.username)[0]
 	sLocation = Location.objects.filter(name = location)[0]
+	if int(peopleLimit) > 0:
+		isDineOut = True
+	else:
+		isDineOut = False
+	# print(Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0, dineIn = isDineOut).count())
 	if (Order.objects.filter(creator = sUser, status__lte = 0).count() > 0):
 		return HttpResponse(-1) 
-	elif (Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0).count() > 0):
-		userOpened = Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0)[0].creator.username
+
+	elif (Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0, dineIn = isDineOut).count() > 0):
+		userOpened = Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0, dineIn = isDineOut)[0].creator.username
 		return HttpResponse(userOpened) 
+	
 	elif (Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0).count() > 0):
 		userOpened = Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0)[0].creator.username
 		return HttpResponse("9" + userOpened) 
+	
 	if peopleLimit == "0":
 		newO = Order(timeLimit = int(strip_tags(timelimit)),\
 				 creator = sUser,\
@@ -214,6 +222,8 @@ def joinOrder(request):
 		else:
 			return HttpResponse(order.creator)
 	order = Order.objects.filter(pk = oid)[0]
+	if order.people_joined.count() >= order.peopleLimit:
+		return HttpResponse(-3)
 	if (order.status >= 0):
 		return HttpResponse("Bad request!")
 	n = Notification(user = order.creator, status = 2, from_user = sUser.username)

@@ -28,11 +28,9 @@ function hasOrderArrived(){
             #2: joinedOrder
             #3: mealAdded
             #4: new order created
-            #5: dine out time completed
             #-3:left order
             #-2: order cancelled
-            #-4: removed meal
-            */
+            #-4: removed meal*/
             var tone = document.getElementById("tone"); 
 			
             if(status == "1"){
@@ -542,6 +540,7 @@ function setTimer(i) {
 			elems[i].innerHTML = ts
 	}
 	timer();
+	
 }
 
 // $("#myorders1 > thead th:nth-child(0)").hide();
@@ -649,6 +648,8 @@ function joinOrder(oid) {
                 window.location.reload();
             else if (data == 1)
                 alert("To join this order, please cancel yours first.");
+			else if (data == -3)
+				alert("Sorry! The maximum number of people for this order has been met.");
             else 
                 alert("To join this order, please leave " + data + "'s order first.");
         }
