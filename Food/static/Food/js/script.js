@@ -478,8 +478,24 @@ function setTimer(i) {
 	  if (count <= 0)
 	  {
 		clearInterval(counter);
-		if (aaa > 0)
-			elems[i].innerHTML = "Completed"
+        if(aaa >0){
+            $.ajax({ 
+            type: "GET",
+            url: "isPartOfOrder/",
+            data: "oid=" + oidAndStatus[0] + "&username=" + oidAndStatus[3],
+            success: function(data) {
+                if(data == "1"){
+                    $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Reminder! You are supposed to got to the meet up location to dine out now. Click to update and see who else is coming!</a></strong></p></div>");
+                    if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+                    }
+                    tone.play();
+                }   
+            }
+            }); 
+
+        elems[i].innerHTML = "Completed"
+        }	
 		else 
 			elems[i].innerHTML = "On the way"
 		$("#orderArrivedD").show(); 	
