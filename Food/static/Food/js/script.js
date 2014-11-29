@@ -43,8 +43,6 @@ function hasOrderArrived(){
                 } else {
                     console.log("Cant vibrate");
                 }
-
-                tone.play();
             }
             else if (status == "-2"){
                 $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Your order has been cancelled by its creator!</a></strong></p></div>");
@@ -127,7 +125,6 @@ function removeNotification(){
 
 function viewmyorders(){
      if ($("#openAllOrders").html() == "Close Orders") {
-        // alert('ads');
         $("#openAllOrders").html("Open Orders")
         $("#ordertable").hide()
         $("#neworderbutton").html("Cancel Order")
@@ -139,7 +136,6 @@ function viewmyorders(){
 
 function neworderrollout() {
     if ($("#openAllOrders").html() == "Close Orders") {
-		// alert('ads');
         $("#openAllOrders").html("Open Orders")
         $("#myorders").hide()
         $("#neworderbutton").html("Cancel Order")
@@ -331,7 +327,6 @@ function newMeal(v) {
 
 function addMeal(v, pj, oid) {
 	var user = pj;
-    // alert('ads')
     mealName = ($("#mealselecter").find(":selected").text()).split(',')[0];
     count = $("#mealcountselecter").find(":selected").text();
     price = (($("#mealselecter").find(":selected").text()).split(',')[1]).split(' ')[1];
@@ -458,8 +453,6 @@ function cancelNewMealF() {
 }
 
 function setTimer(i) {
-    // alert($(".timerDivs").eq(i).next().html())
-    // alert($(".timerDivs").eq(i).next().html().indexOf("On the way"))
     var elems = document.getElementsByClassName('timerDivs');
 	oidAndStatus = elems[i].id.split(",")
 	// If order is not open 
@@ -513,40 +506,30 @@ function setTimer(i) {
 		if (document.getElementById("leaveOrderButton") != null)
 			document.getElementById("leaveOrderButton").style.display = "none";				
 			
-			
 		// AJAX CALL UPDATES STATUS	
 	   $.ajax({ 
 			type: "GET",
 			url: "orderTimeUp/",
 			data: "oid=" + oidAndStatus[0],
 			success: function(data) {
-				// alert('status updated');
 			}
 		});	
 		 return;
 	  }
 		var rmin = (Math.ceil(count/60)-1)
 		var rsec = count % 60
-		// alert((rsec+"").length) 
 		if ((rsec+"").length == 1)
 			rsec = "0"+rsec
 		if (rsec == 0) rmin += 1;
-		// alert(rmin)
-		// alert(oidAndStatus)
-		// alert(oidAndStatus[2])
 		if (aaa > 0)
 			var ts = "Leaving in " + rmin + ":" + rsec
 		else 
 			var ts = "Open for " + rmin + ":" + rsec
-
 		if (elems[i] != null)
 			elems[i].innerHTML = ts
 	}
 	timer();
-	
 }
-
-// $("#myorders1 > thead th:nth-child(0)").hide();
 
 function addNewRestaurant() {
     if ($("#restaurantselector").find(":selected").text() == "Add Restaurant") {

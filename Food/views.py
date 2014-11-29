@@ -30,7 +30,6 @@ from Food.models import Order
 from Food.models import Meal
 from Food.models import Notification
 
-
 @login_required(login_url='login/')
 def index(request):
 	sUser = request.user
@@ -43,8 +42,7 @@ def index(request):
 	meals = Meal.objects.filter(order = None)
 	return render(request,'Food/index.html',{'restaurants': restaurants, 'locations' : locations, 'orders' : orders, 'meals' : meals, 'openo': 0, 't': timezone.now},
 					context_instance=RequestContext(request))
-			
-			
+				
 @login_required(login_url='login/')
 def logoutv(request):
 	logout(request)
@@ -73,7 +71,6 @@ def neworder(request):
 		isDineOut = True
 	else:
 		isDineOut = False
-	# print(Order.objects.filter(restaurant = sRestaurant, location = sLocation, status__lte = 0, dineIn = isDineOut).count())
 	if (Order.objects.filter(creator = sUser, status__lte = 0).count() > 0):
 		return HttpResponse(-1) 
 
@@ -105,7 +102,6 @@ def neworder(request):
 		if person.username != sUser.username:
 			n = Notification(user = person, status = 4, from_user = sUser.username)
 			n.save()
-	# print 'here2'
 	return HttpResponse(1) 
 	
 def newdineout(request):
@@ -113,51 +109,38 @@ def newdineout(request):
 	location= request.GET['location']
 	timelimit= request.GET['timelimit']
 	maxpeople = request.GET['people']
-
 	sRestaurant = Restaurant.objects.filter(name = restaurant)[0]
 	sLocation = Location.objects.filter(name = location)[0]
-	print sRestaurant
-	print request.user.username
 	newO = Order(timeLimit = int(timelimit),\
 				 creator = request.user.username,\
 				 peopleLimit = int(maxpeople),\
 				 dineIn = True,\
 				 location = sLocation,\
 				 restaurant = sRestaurant)
-	print 'here1'
-	print newO
 	newO.save()
-	print 'here2'
 	return HttpResponse(1) 
 	
 def addmeal(request):
 	mealName = request.GET['mealName']
 	count = request.GET['count']
 	userM = request.GET['userM']
-	print "USER: " 
 	sUser = User.objects.filter(username = userM)[0]
 	oid = request.GET['oid']
 	order = Order.objects.filter(pk = oid)[0]
 	if ((Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order).count()) > 0):
-		print "ALREADY HERE\n"
 		meal = Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order)[0]
 		meal.count = meal.count + int(count);
-		print "NEW COUNT" 
-		print meal.count
 		meal.save()
 		if order.creator.username!= sUser.username:
 			n = Notification(user = order.creator, status=3, from_user=sUser.username)
 			n.save()		
 		return HttpResponse(Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order)[0].id) 
 	mealPrice = Meal.objects.filter(name = mealName)[0].price
-	print "MEAL PRICE"
-	print mealPrice
 	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
 	newM.save()
 	if order.creator.username!= sUser.username:
 		n = Notification(user = order.creator, status=3, from_user=sUser.username)
 		n.save()
-	print newM.id
 	return HttpResponse(newM.id) 	
   		
 def removeMeal(request):
@@ -292,9 +275,7 @@ def deleteOrder(request):
 	order.delete()
 	return redirect('index')
 	
-		
 def orderArrived(request):
-	print "here"
 	orderId = request.GET['data']
 	order = Order.objects.filter(pk = orderId)
 	order = order[0]
@@ -318,7 +299,6 @@ def orderTimeUp(request):
 		order.status = 0
 	order.save()
 	return HttpResponse(1)
-
 
 def isPartOfOrder(request):
 	oid = request.GET['oid']
