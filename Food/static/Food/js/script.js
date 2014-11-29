@@ -104,7 +104,6 @@ function hasOrderArrived(){
 }
 
 function orderArrived(v, orderId){
-    console.log("pressed arrived " + orderId);
     $.ajax({
         type: "GET",
         url: "orderArrived/",
@@ -113,7 +112,6 @@ function orderArrived(v, orderId){
 		// (data);
             if (data == 1){
                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your friends will be notified that their food has arrived!</strong></p></div>");
-                console.log("Done");
 				jQuery(v).closest("tbody").parent().parent().parent().find(".timerDivs").parent().html("Arrived");
 				jQuery(v).hide();
             }
