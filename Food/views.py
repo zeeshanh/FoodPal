@@ -31,9 +31,12 @@ from Food.models import Meal
 from Food.models import Notification
 
 
-# Create your views here.
 @login_required(login_url='login/')
 def index(request):
+	sUser = request.user
+	expired_Notifications = Notification.objects.filter(user=sUser, status=4)
+	for notification in expired_Notifications:
+		notification.delete()
 	restaurants = Restaurant.objects.all()
 	locations = Location.objects.all() 
 	orders = Order.objects.all().order_by('-date_created')
@@ -49,7 +52,7 @@ def logoutv(request):
 	
 def register_user(request):
 	if request.method == 'POST':
-		form = UserCreationForm(request.POST)
+		form = UserCreationForm(request.POST) 
 		if form.is_valid():
 			form.save()
 			return HttpResponseRedirect(reverse('index'))
