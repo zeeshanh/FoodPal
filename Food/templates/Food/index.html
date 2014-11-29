@@ -76,23 +76,23 @@
 			{% endif %} 
 			<br><br><br>
 			<div class="row">
-				<div class="col-lg-4 md">
-					<img class="img-circle" src="{% static 'Food/images/openOrders.png' %}"alt="Generic placeholder image" style="width: 200px; height: 200px;">
+				<div class="col-lg-6 md">
+					<img class="img-circle" src="{% static 'Food/images/openOrders.png' %}"alt="Generic placeholder image" style="width: 250px; height: 250px;">
 					<h3>View open Orders.</h3>
 					<p><a class="btn btn-primary" href="#" role="button" id='openAllOrders' onclick="viewAllOrders()"> Open Orders</a></p>
 				</div>
 				<!-- /.col-lg-4 -->
-				<div class="col-lg-4 md">
-					<img class="img-circle"  src="{% static 'Food/images/addOrder.png' %}"  alt="Generic placeholder image" style="width: 200px; height: 200px;">
+				<div class="col-lg-6 md">
+					<img class="img-circle"  src="{% static 'Food/images/addOrder.png' %}"  alt="Generic placeholder image" style="width: 250px; height: 250px;">
 					<h3 id="orderheader"> Make a new Order. </h3>
 					<p><a class="btn btn-primary" href="#" id='neworderbutton' role="button" onclick="neworderrollout()">New Order</a></p>
 				</div>
 				<!-- /.col-lg-4 -->
- 				<div class="col-lg-4 md">
+<!--  				<div class="col-lg-4 md">
 					<img class="img-circle" src="{% static 'Food/images/addOrder.png' %}" alt="Generic placeholder image" style="width: 200px; height: 200px;">
 					<h3>Make a new Dine Out.</h3>
 					<p><a class="btn btn-primary" href="#" id = "newdineout" role="button">New Dine Out</a></p>
-				</div>
+				</div> -->
 			</div>
 		</div>
 		<br><br>
@@ -156,6 +156,12 @@
 					<div class="lead">
 						<div class="form-horizontal" id="neworderform" >
 							<!-- Select Basic -->
+							
+			
+							
+							
+							
+							
 							<div class="form-group">
 								<label class="col-md-4 control-label" >Select Restaurant</label>
 								<div class="col-md-6">
@@ -169,14 +175,7 @@
 									</select>
 								</div>
 							</div>
-							
-			
-							
-							
-							
-							
-							
-							
+
 							
 							
 							
@@ -204,6 +203,33 @@
 									<input id="timelimitfield" name="timelimit" type="text" placeholder="E.g. 10 minutes" class="form-control input-md">
 								</div>
 							</div>
+							
+							<div class="form-group" id='orderTypeForm'>
+							  <label class="col-md-4 control-label" for="orderType">Order Type</label>
+							  <div class="col-md-4">
+							  <div class="radio">
+								<label for="orderType-0">
+								  <input type="radio" name="orderType" onclick="showPeopleLimit(0)" id="orderType-0" value="1" checked="checked">
+								  Delivery
+								</label>
+								</div>
+							  <div class="radio">
+								<label for="orderType-1">
+								  <input type="radio" name="orderType" onclick="showPeopleLimit(1)" id="orderType-1" value="2">
+								  Dine Out
+								</label>
+								</div>
+							  </div>							
+							</div>							
+																		
+							<!-- Text input-->
+							<div class="form-group" style="display: none;" id="PeopleLimit">
+								<label class="col-md-4 control-label" >People Limit</label>  
+								<div class="col-md-6">
+									<input id="peopleLimitField" name="peopleLimit" type="text" placeholder="E.g. 2 persons" class="form-control input-md">
+								</div>
+							</div>							
+							
 							<!-- Button -->
 							<div class="form-group">
 								<label class="col-md-4 control-label" for="submitorderB">Submit Order</label>
@@ -211,6 +237,9 @@
 									<button id="submitorderB" name="submitorderB" class="btn btn-primary" onclick="addorder()"  >Submit</button>
 								</div>
 							</div>
+							
+							
+							
 						</div>
 						
 						<div class="form-horizontal"  id="addRestaurantDiv">
@@ -291,314 +320,476 @@
 							<tbody>
 								{% if orders %}
 								{% for order in orders %}
-								<tr class='orderrowclass' id="{{order.id}}">
-									<td> 
-										{% if order.dineIn  %} 
-										Dine Out
+								
+									<tr class='orderrowclass' id="{{order.id}}">
+										<td> 
+											{% if order.dineIn  %} 
+											Dine Out
+											{% else %}
+											Delivery
+											{% endif %}	
+										</td>
+										{% if order.restaurant.webpage != None %}
+										<td><a href="{{order.restaurant.webpage}}" target="_blank"> {{order.restaurant}}</a> </td>  
 										{% else %}
-										Delivery
-										{% endif %}	
-									</td>
-									{% if order.restaurant.webpage != None %}
-									<td><a href="{{order.restaurant.webpage}}" target="_blank"> {{order.restaurant}}</a> </td>  
-									{% else %}
-									<td> {{order.restaurant}} </td>  
-									{% endif %}
-									<td>{{order.location}}</td>
-									<td> 
-										<div class="timerDivs" id="{{order.id}},{{order.status}}">
-										 {{order.date_created|timesince_human }}, {{order.timeLimit}}
-										</div> 
-										<div>
-										{% if order.status == 0 %}
-										On the way
-										{% elif order.status == 1 %}
-										Arrived
-										{% endif %}	
-										</div>
+										<td> {{order.restaurant}} </td>  
+										{% endif %}
+										<td>{{order.location}}</td>
+										<td> 
+											<div class="timerDivs" id="{{order.id}},{{order.status}},{{order.peopleLimit}}">
+											 {{order.date_created|timesince_human }}, {{order.timeLimit}}
+											</div> 
+											<div>
+											{% if not order.dineIn %}
+												{% if order.status == 0 %}
+												On the way
+												{% elif order.status == 1 %}
+												Arrived
+												{% endif %}	
+											{% else %}
+												{% if order.status == -1 %}
+												{% else %}
+												Completed
+												{% endif %}
+											{% endif %}	
+											
+											</div>
 
-									</td>
-									<!-- People Joined table, Person Meals and Total Price -->
-									<td class="peopleJoinedTable">
-										<table class="table table-hover" id='peoplesorders'>
-											<thead>
-												<tr>
-													<th width="25%">Person</th>
-													<th>Meals</th>
-													<th width="20%">Total Price</th>
-												</tr>
-											</thead>
-											<tbody>
-												{% if order.people_joined.all %}
-												{% for person_joined in order.people_joined.all %}
-												<tr>
-													<td> 
-														{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
-														Me (Owner)
-														{% elif person_joined.username == order.creator.username %}
-														
-															{% if user.first_name %}
-																{{person_joined.first_name}} {{person_joined.last_name}} (Owner)
-															{% else %}
-																{{ person_joined.username }} (Owner)
-															{% endif %}														
-																
+										</td>
+										<!-- People Joined table, Person Meals and Total Price -->
+										
+										{% if order.dineIn  %} 
 
-														{% else %}
-														
-															{% if person_joined.first_name %}
-																{{person_joined.first_name}} {{person_joined.last_name}}
+										
+										
+										
+										
+										
+								
+										<td class="peopleJoinedTable">
+											<table class="table table-hover" id='peoplesorders'>
+												<thead>
+													<tr>
+														<th width="25%">People coming (limit of {{order.peopleLimit}} person(s))</th>
+													</tr>
+												</thead>
+												<tbody>
+													{% if order.people_joined.all %}
+													{% for person_joined in order.people_joined.all %}
+													<tr>
+														<td> 
+															{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
+																Me (Owner)
+															{% elif person_joined.username == order.creator.username %}
+															
+																{% if user.first_name %}
+																	{{person_joined.first_name}} {{person_joined.last_name}} (Owner)
+																{% else %}
+																	{{ person_joined.username }} (Owner)
+																{% endif %}														
+																	
+
 															{% else %}
-																{{ person_joined.username }}
-															{% endif %}														
+															
+																{% if person_joined.first_name %}
+																	{{person_joined.first_name}} {{person_joined.last_name}}
+																{% else %}
+																	{{ person_joined.username }}
+																{% endif %}														
+															
+															{{person_joined.first_name}} {{person_joined.last_name}}
+															{% endif %}
+														</td>
 														
-														{{person_joined.first_name}} {{person_joined.last_name}}
-														{% endif %}
-													</td>
-													<td>
-														<table class="table table-hover" id='mealsperperson' class="fixed">
-															<thead>
-																<tr>
-																	<th  width="200px" 			 >Title</th>
-																	<th align="center" width="70px">Count</th>
-																	<th align="center" width="70px">Price</th>
-																</tr>
-															</thead>
-															<tbody>
-																{% if orders %}
-																{% if order.people_joined.all %}
-																{% for meal in order.meal_set.all %}
-																{% if meal.owner.username == person_joined.username %}
-																<tr>
-																	<td onmouseover="addRemove(this, 0)" onmouseout="addRemove(this, 1)">
-																		<div class="mealDiv">
-																			{{meal.name}}
-																		</div>
-																		<div class="removeSignDiv">
-																			{% if meal.owner.username == user.username  and meal.order.status == -1%}
-																			<img onclick= "removeMeal(this, {{meal.id}})" class="removeSign" src="{% static 'Food/images/remove.png' %}" alt=""  > 
-																			{% endif %}
-																		</div>
-																	</td>
-																	<td align="center" class="mealcountclass">
-																		{{meal.count}}
-																	</td>
-																	<td align="center" class="mealtotalclass">
-																		<script> document.write({{meal.price}}* {{meal.count}})	</script>
-																	</td>
-																</tr>
-																{% endif %}
-																{% endfor %}
-																{% if user.username == person_joined.username and order.status == -1 %}
-																<tr id="newMealRow">
-																	<td>
-																		<div> <em> New Meal </em> </div>
-																		<!-- <div class="col-md-10">
-																			<input id="newMealBox" name="" type="text" placeholder="Enter meal" class="form-control input-md addBox">  
-																			</div>  -->
-																		<div class="addBox">
-																			<select onclick= "createMeal(this)" id="mealselecter" name="mealselecter" class="form-control">
-																				{% if meals %}
-																				{% for meal in meals %}
-																					{% if meal.restaurant.name == order.restaurant.name %}
-																					<option value="">{{meal.name}}, {{meal.price}} QAR</option>
-																					{% endif %}
-																				{% endfor %}
-																				{% endif %}
-																				<option id="lastOption" value="">Create Meal</option>
-																			</select>
-																		</div>
-																	</td>
-																	<td> 
-																		<div  class="countBox">
-																			<select id="mealcountselecter" name="mealcountselecter" class="form-control">
-																				<option value="">1</option>
-																				<option value="">2</option>
-																				<option value="">3</option>
-																				<option value="">4</option>
-																				<option value="">5</option>
-																				<option value="">6</option>
-																				<option value="">7</option>
-																				<option value="">8</option>
-																				<option value="">9</option>
-																			</select>
-																		</div>
-																	</td>
-																	<td id="addField" onclick="newMeal(this)">
-																		<div  align="center">	
-																			<img class="addSign" src="{% static 'Food/images/add.png' %}" alt=""  > 
-																		</div>
-																		<div class="col-md-4  singleAdd"  >
-																			<button onclick="addMeal(this, '{{person_joined}}', {{order.id}})"  name="singlebutton" class="btn btn-success">Add</button>
-																		</div>
-																	</td>
-																</tr>
-																<tr>
-																	<td colspan="3">
-																		<fieldset>
-																			<div  id="createMealForm" class="createMealFormClass">
-																				<!-- Text input-->
-																				<div class="form-group createMealFormBox">
-																					<div class="col-md-10">
-																						<input id="createMealName" type="text" placeholder="Meal Name" class="form-control input-md">
-																					</div>
-																				</div>
-																				<!-- Text input-->
-																				<div class="form-group">
-																					<div class="col-md-10">
-																						<input id="createMealPrice" type="text" placeholder="Price" class="form-control input-md  createMealFormBox">
-																					</div>
-																				</div>
-																				<!-- Button -->
-																				<div class="form-group">
-																					<div class="col-md-14">
-																						<button onclick="createMealButtonF(this, '{{order.restaurant}}')" id="createMealButton"  class="btn btn-success createMealFormBox">Create</button>
-																						<button onclick="cancelNewMealF()" id="cancelNewMeal" class="btn btn-danger">Cancel</button>
-																					</div> 
-																				</div>
-																			</div>
-																		</fieldset>
-																	</td>
-																</tr>
-	
-																{% endif %}
-																{% endif %}
-																{% endif %}
-															</tbody>
-														</table>
-													</td>
-													<td>
-														<script> total = 0;</script>
-														{% if order.people_joined.all %}
-														{% for meal in order.meal_set.all %}
-														{% if meal.owner.username == person_joined.username %}		
-														<script>
-															total += {{meal.price}}*{{meal.count}}
-														</script>
-														{% endif %}
-														{% endfor %}
-														{% endif %}
-														<h2 align="center">
-															<script> document.write(total)	</script>
-														</h2>
-													</td>
-													
-													
-												</tr>
-					
+														
+													</tr>
+
+													{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
+													<tr>
+														<td colspan="5" class="leaveOrderButton" id = "deleteOrderDiv">
+															<div class="form-group">
+															  <div class="col-md-14">
+																<button id="leaveOrderButton" onclick="deleteOrder(this,'{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
+															  </div>
+															</div>								
+														</td>									
+													</tr>	
 				
-
-
-												{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
-												<tr>
-													<td colspan="5" class="leaveOrderButton" id = "deleteOrderDiv">
+													{%  elif user.username  == person_joined.username and order.status == -1 %}
+													
+												
+													<tr>
+													<td colspan="5" class="leaveOrderButton">
 														<div class="form-group">
 														  <div class="col-md-14">
-															<button id="leaveOrderButton" onclick="deleteOrder(this,'{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
+															<button id="leaveOrderButton" onclick="leaveOrder(this, '{{order.id}}')" name="leaveOrderButton" class="btn btn-warning">Leave Order</button>
 														  </div>
 														</div>								
 													</td>									
-												</tr>	
-			
-												{%  elif user.username  == person_joined.username and order.status == -1 %}
-												
-											
-												<tr>
-												<td colspan="5" class="leaveOrderButton">
-													<div class="form-group">
-													  <div class="col-md-14">
-														<button id="leaveOrderButton" onclick="leaveOrder(this, '{{order.id}}')" name="leaveOrderButton" class="btn btn-warning">Leave Order</button>
-													  </div>
-													</div>								
-												</td>									
-												</tr>												
-												{% endif %}
+													</tr>												
+													{% endif %}
 
 
-												
-												
-												
-												
-												
-											{% endfor %}
-
-												{% if orders %}
-												{% for order2 in orders %}
-												
-												 
-												{% if user != order2.creator and user not in order2.people_joined.all and order2.status  == -1 and order2 == order and not order.date_created|timesince|subtract:order.timeLimit %}
-												<tr>
-												<td colspan="5" class="joinOrderClass">
-													<div class="form-group">
-													  <div class="col-md-14">
-														<button id="joinButton" onclick="joinOrder('{{order2.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
-													  </div>
-													</div>								
-												</td>									
-												</tr>
-												{% endif %}
+					
+					
+					
+													
 												{% endfor %}
-												{% endif %}
-																				
-												{% if user.username  == order.creator.username and order.status == 0 %}
-												<tr>
-												<td colspan="5" id="orderArrivedD">
-													<div class="form-group">
-													  <div class="col-md-14">
-														<button id="orderArrivedB" onclick="orderArrived(this, '{{order.id}}')" class="btn btn-info">Order Arrived</button>
-													  </div>
-													</div>								
-												</td>									
-												</tr>
-												{% elif user.username  == order.creator.username and order.status == -1 %}
-												<tr>
-												<td colspan="5" id="orderArrivedD" style="display: none;">
-													<div class="form-group">
-													  <div class="col-md-14">
-														<button id="orderArrivedB" onclick="orderArrived(this, '{{order.id}}')" class="btn btn-info">Order Arrived</button>
-													  </div>
-													</div>								
-												</td>									
-												</tr>												
+
+													{% if orders %}
+													{% for order2 in orders %}
+		
+													{% if user != order2.creator and user not in order2.people_joined.all and order2.status  == -1 and order2 == order and not order.date_created|timesince|subtract:order.timeLimit and order2.people_joined.count|canJoin:order2.peopleLimit == 0%}
+													<tr> 
+													<td colspan="5" class="joinOrderClass">
+														<div class="form-group">
+														  <div class="col-md-14">
+															<button id="joinButton" onclick="joinOrder('{{order2.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
+														  </div>
+														</div>								
+													</td>									
+													</tr>
+													{% endif %}
+													{% endfor %}
+													{% endif %}											
 												
 												{% endif %}
 																					
 														
 												
 												
-												{% endif %}
-											</tbody>
-										</table>
-									</td>
-									
-									<td class="peopleJoinedShort">
-										{% if order.people_joined.all.count == 1 %}
-											{% if user.username == order.creator.username %}
-												You
-											{% else %}
-																					
-												{% if user.first_name %}
-													{{order.creator.first_name}} {{order.creator.last_name}}
-												{% else %}
-													{{order.creator.username}}
-												{% endif %} 											
-																					
+												</tbody>
+											</table>
+										</td>
+	
+	
+	
+	
+	
+	
+	
+	
 											
-											{% endif %}
-										{% elif user in order.people_joined.all %}
-											You and {{order.people_joined.all.count|add:"-1"}} other(s)
+										
+										
+										
+										
+										
+										
+										
+										
+										
+										
+										
 										{% else %}
-											{{order.people_joined.all.count}} people
-										{% endif %}	
-									</td>
-									<td> 
-										  <div class="col-md-4">
-											<button id="detailsButton" name="detailsButton" class="btn btn-primary" onclick="showDetails(this)">Show Details</button>
-										  </div>
-									</td>
-								</tr>
-							
-								<tr><td colspan="7"></td></tr>
+						
+													
+								
+										<td class="peopleJoinedTable">
+											<table class="table table-hover" id='peoplesorders'>
+												<thead>
+													<tr>
+														<th width="25%">Person</th>
+														<th>Meals</th>
+														<th width="20%">Total Price</th>
+													</tr>
+												</thead>
+												<tbody>
+													{% if order.people_joined.all %}
+													{% for person_joined in order.people_joined.all %}
+													<tr>
+														<td> 
+															{% if person_joined.username == user.username and person_joined.username == order.creator.username %}
+															Me (Owner)
+															{% elif person_joined.username == order.creator.username %}
+															
+																{% if user.first_name %}
+																	{{person_joined.first_name}} {{person_joined.last_name}} (Owner)
+																{% else %}
+																	{{ person_joined.username }} (Owner)
+																{% endif %}														
+																	
+
+															{% else %}
+															
+																{% if person_joined.first_name %}
+																	{{person_joined.first_name}} {{person_joined.last_name}}
+																{% else %}
+																	{{ person_joined.username }}
+																{% endif %}														
+															
+															{{person_joined.first_name}} {{person_joined.last_name}}
+															{% endif %}
+														</td>
+														<td>
+															<table class="table table-hover" id='mealsperperson' class="fixed">
+																<thead>
+																	<tr>
+																		<th  width="200px" 			 >Title</th>
+																		<th align="center" width="70px">Count</th>
+																		<th align="center" width="70px">Price</th>
+																	</tr>
+																</thead>
+																<tbody>
+																	{% if orders %}
+																	{% if order.people_joined.all %}
+																	{% for meal in order.meal_set.all %}
+																	{% if meal.owner.username == person_joined.username %}
+																	<tr>
+																		<td onmouseover="addRemove(this, 0)" onmouseout="addRemove(this, 1)">
+																			<div class="mealDiv">
+																				{{meal.name}}
+																			</div>
+																			<div class="removeSignDiv">
+																				{% if meal.owner.username == user.username  and meal.order.status == -1%}
+																				<img onclick= "removeMeal(this, {{meal.id}})" class="removeSign" src="{% static 'Food/images/remove.png' %}" alt=""  > 
+																				{% endif %}
+																			</div>
+																		</td>
+																		<td align="center" class="mealcountclass">
+																			{{meal.count}}
+																		</td>
+																		<td align="center" class="mealtotalclass">
+																			<script> document.write({{meal.price}}* {{meal.count}})	</script>
+																		</td>
+																	</tr>
+																	{% endif %}
+																	{% endfor %}
+																	{% if user.username == person_joined.username and order.status == -1 %}
+																	<tr id="newMealRow">
+																		<td>
+																			<div> <em> New Meal </em> </div>
+																			<!-- <div class="col-md-10">
+																				<input id="newMealBox" name="" type="text" placeholder="Enter meal" class="form-control input-md addBox">  
+																				</div>  -->
+																			<div class="addBox">
+																				<select onclick= "createMeal(this)" id="mealselecter" name="mealselecter" class="form-control">
+																					{% if meals %}
+																					{% for meal in meals %}
+																						{% if meal.restaurant.name == order.restaurant.name %}
+																						<option value="">{{meal.name}}, {{meal.price}} QAR</option>
+																						{% endif %}
+																					{% endfor %}
+																					{% endif %}
+																					<option id="lastOption" value="">Create Meal</option>
+																				</select>
+																			</div>
+																		</td>
+																		<td> 
+																			<div  class="countBox">
+																				<select id="mealcountselecter" name="mealcountselecter" class="form-control">
+																					<option value="">1</option>
+																					<option value="">2</option>
+																					<option value="">3</option>
+																					<option value="">4</option>
+																					<option value="">5</option>
+																					<option value="">6</option>
+																					<option value="">7</option>
+																					<option value="">8</option>
+																					<option value="">9</option>
+																				</select>
+																			</div>
+																		</td>
+																		<td id="addField" onclick="newMeal(this)">
+																			<div  align="center">	
+																				<img class="addSign" src="{% static 'Food/images/add.png' %}" alt=""  > 
+																			</div>
+																			<div class="col-md-4  singleAdd"  >
+																				<button onclick="addMeal(this, '{{person_joined}}', {{order.id}})"  name="singlebutton" class="btn btn-success">Add</button>
+																			</div>
+																		</td>
+																	</tr>
+																	<tr>
+																		<td colspan="3">
+																			<fieldset>
+																				<div  id="createMealForm" class="createMealFormClass">
+																					<!-- Text input-->
+																					<div class="form-group createMealFormBox">
+																						<div class="col-md-10">
+																							<input id="createMealName" type="text" placeholder="Meal Name" class="form-control input-md">
+																						</div>
+																					</div>
+																					<!-- Text input-->
+																					<div class="form-group">
+																						<div class="col-md-10">
+																							<input id="createMealPrice" type="text" placeholder="Price" class="form-control input-md  createMealFormBox">
+																						</div>
+																					</div>
+																					<!-- Button -->
+																					<div class="form-group">
+																						<div class="col-md-14">
+																							<button onclick="createMealButtonF(this, '{{order.restaurant}}')" id="createMealButton"  class="btn btn-success createMealFormBox">Create</button>
+																							<button onclick="cancelNewMealF()" id="cancelNewMeal" class="btn btn-danger">Cancel</button>
+																						</div> 
+																					</div>
+																				</div>
+																			</fieldset>
+																		</td>
+																	</tr>
+		
+																	{% endif %}
+																	{% endif %}
+																	{% endif %}
+																</tbody>
+															</table>
+														</td>
+														<td>
+															<script> total = 0;</script>
+															{% if order.people_joined.all %}
+															{% for meal in order.meal_set.all %}
+															{% if meal.owner.username == person_joined.username %}		
+															<script>
+																total += {{meal.price}}*{{meal.count}}
+															</script>
+															{% endif %}
+															{% endfor %}
+															{% endif %}
+															<h2 align="center">
+																<script> document.write(total)	</script>
+															</h2>
+														</td>
+														
+														
+													</tr>
+						
+					
+
+
+													{%   if user.username == order.creator.username and person_joined.username == user.username and order.status == -1 %}
+													<tr>
+														<td colspan="5" class="leaveOrderButton" id = "deleteOrderDiv">
+															<div class="form-group">
+															  <div class="col-md-14">
+																<button id="leaveOrderButton" onclick="deleteOrder(this,'{{order.id}}')" name="leaveOrderButton" class="btn btn-danger">Cancel Order</button>
+															  </div>
+															</div>								
+														</td>									
+													</tr>	
+				
+													{%  elif user.username  == person_joined.username and order.status == -1 %}
+													
+												
+													<tr>
+													<td colspan="5" class="leaveOrderButton">
+														<div class="form-group">
+														  <div class="col-md-14">
+															<button id="leaveOrderButton" onclick="leaveOrder(this, '{{order.id}}')" name="leaveOrderButton" class="btn btn-warning">Leave Order</button>
+														  </div>
+														</div>								
+													</td>									
+													</tr>												
+													{% endif %}
+
+
+													
+													
+													
+													
+													
+												{% endfor %}
+
+													{% if orders %}
+													{% for order2 in orders %}
+													
+													 
+													{% if user != order2.creator and user not in order2.people_joined.all and order2.status  == -1 and order2 == order and not order.date_created|timesince|subtract:order.timeLimit %}
+													<tr>
+													<td colspan="5" class="joinOrderClass">
+														<div class="form-group">
+														  <div class="col-md-14">
+															<button id="joinButton" onclick="joinOrder('{{order2.id}}')" name="joinButton" class="btn btn-info">Join Order</button>
+														  </div>
+														</div>								
+													</td>									
+													</tr>
+													{% endif %}
+													{% endfor %}
+													{% endif %}
+																					
+													{% if user.username  == order.creator.username and order.status == 0 %}
+													<tr>
+													<td colspan="5" id="orderArrivedD">
+														<div class="form-group">
+														  <div class="col-md-14">
+															<button id="orderArrivedB" onclick="orderArrived(this, '{{order.id}}')" class="btn btn-info">Order Arrived</button>
+														  </div>
+														</div>								
+													</td>									
+													</tr>
+													{% elif user.username  == order.creator.username and order.status == -1 %}
+													<tr>
+													<td colspan="5" id="orderArrivedD" style="display: none;">
+														<div class="form-group">
+														  <div class="col-md-14">
+															<button id="orderArrivedB" onclick="orderArrived(this, '{{order.id}}')" class="btn btn-info">Order Arrived</button>
+														  </div>
+														</div>								
+													</td>									
+													</tr>												
+													
+													{% endif %}
+																						
+															
+													
+													
+													{% endif %}
+												</tbody>
+											</table>
+										</td>
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+										{% endif %}											
+										<td class="peopleJoinedShort">
+											{% if order.people_joined.all.count == 1 %}
+												{% if user.username == order.creator.username %}
+													You
+												{% else %}
+																						
+													{% if user.first_name %}
+														{{order.creator.first_name}} {{order.creator.last_name}}
+													{% else %}
+														{{order.creator.username}}
+													{% endif %} 											
+																						
+												
+												{% endif %}
+											{% elif user in order.people_joined.all %}
+												You and {{order.people_joined.all.count|add:"-1"}} other(s)
+											{% else %}
+												{{order.people_joined.all.count}} people
+											{% endif %}	
+										</td>
+										<td> 
+											  <div class="col-md-4">
+												<button id="detailsButton" name="detailsButton" class="btn btn-primary" onclick="showDetails(this)">Show Details</button>
+											  </div>
+										</td>
+									</tr>
+								
+									<tr><td colspan="7"></td></tr>
+
+								
+								
+								
+								
+								
+
+
+
+
+									
 								{% endfor %}
 								{% endif %}
 

@@ -162,17 +162,37 @@ function viewAllOrders() {
 	
 }
 
+function showPeopleLimit(v) {
+	if (v == 0)
+		$("#PeopleLimit").fadeOut("fast")
+	else 
+		$("#PeopleLimit").fadeIn("fast")	
+
+}
 function addorder() {
     timelimit = $("#timelimitfield").val();
     mylocation = $("#locationselector").find(":selected").text();
     restaurant = $("#restaurantselector").find(":selected").text();
-	
+	var data;
 	if (isNaN(timelimit) || timelimit <= 0) {
 		alert("Enter an appropriate time limit.");
 		return
 	}	
-    data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit;
-	// var url = location.href.replace( '/#', '') + '/neworder/'
+    
+	// Delivery
+	if ($("input[name='orderType']:checked").val() == 1) {
+		data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit + "&peopleLimit=0";
+	}		
+	
+	// Dine Out
+	else {
+		peopleLimit = $("#peopleLimitField").val();
+		if (isNaN(peopleLimit) || peopleLimit <= 0) {
+			alert("Enter an appropriate people limit.");
+			return
+		}		
+		data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit + "&peopleLimit=" + peopleLimit;
+	}
     $.ajax({
         type: "GET",
 		url:  'neworder/',
@@ -432,7 +452,7 @@ function setTimer(i) {
 		$(".timerDivs").eq(i).html("")
 		return;
 	};
-
+	var aaa = parseInt(oidAndStatus[2])
 	secondsElapsed = parseInt(elems[i].innerHTML.split(', ')[0])
 	secondsLimit = parseInt(elems[i].innerHTML.split(', ')[1])*60
 
@@ -446,7 +466,10 @@ function setTimer(i) {
 	  if (count <= 0)
 	  {
 		clearInterval(counter);
-		elems[i].innerHTML = "On the way"
+		if (aaa > 0)
+			elems[i].innerHTML = "Completed"
+		else 
+			elems[i].innerHTML = "On the way"
 		$("#orderArrivedD").show(); 	
 		
 		if (document.getElementById("deleteOrderDiv") != null)
@@ -458,9 +481,10 @@ function setTimer(i) {
 			document.getElementById("newMealRow").style.display = "none";		
 		if (document.getElementById("leaveOrderButton") != null)
 			document.getElementById("leaveOrderButton").style.display = "none";				
-				
+			
+			
 		// AJAX CALL UPDATES STATUS	
-	   $.ajax({
+	   $.ajax({ 
 			type: "GET",
 			url: "orderTimeUp/",
 			data: "oid=" + oidAndStatus[0],
@@ -476,7 +500,14 @@ function setTimer(i) {
 		if ((rsec+"").length == 1)
 			rsec = "0"+rsec
 		if (rsec == 0) rmin += 1;
-		var ts = "Open for " + rmin + ":" + rsec
+		// alert(rmin)
+		// alert(oidAndStatus)
+		// alert(oidAndStatus[2])
+		if (aaa > 0)
+			var ts = "Leaving in " + rmin + ":" + rsec
+		else 
+			var ts = "Open for " + rmin + ":" + rsec
+
 		if (elems[i] != null)
 			elems[i].innerHTML = ts
 	}

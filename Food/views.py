@@ -59,6 +59,7 @@ def register_user(request):
 	return render_to_response('Food/signup.html', args)	
 
 def neworder(request):
+	peopleLimit= request.GET['peopleLimit']
 	restaurant= request.GET['restaurant']
 	location= request.GET['location']
 	timelimit= request.GET['timelimit']
@@ -73,13 +74,18 @@ def neworder(request):
 	elif (Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0).count() > 0):
 		userOpened = Order.objects.filter(people_joined__username__contains = sUser.username, status__lte = 0)[0].creator.username
 		return HttpResponse("9" + userOpened) 
-	print sRestaurant
-	print request.user.username
-	newO = Order(timeLimit = int(strip_tags(timelimit)),\
+	if peopleLimit == "0":
+		newO = Order(timeLimit = int(strip_tags(timelimit)),\
 				 creator = sUser,\
 				 location = sLocation,\
 				 restaurant = sRestaurant)
-	print newO.id
+	else:
+		newO = Order(timeLimit = int(strip_tags(timelimit)),\
+				 creator = sUser,\
+				 dineIn = True,\
+				 peopleLimit = peopleLimit,\
+				 location = sLocation,\
+				 restaurant = sRestaurant)
 	newO.save()
 	newO.people_joined.add(sUser)
 
@@ -290,6 +296,9 @@ def orderTimeUp(request):
 	order = Order.objects.filter(pk = oid)[0]
 	if order.status == 1:
 	    return HttpResponse(1)
-	order.status = 0
+	if order.dineIn:
+		order.status = 1
+	else:
+		order.status = 0
 	order.save()
 	return HttpResponse(1)
