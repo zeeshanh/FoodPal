@@ -123,12 +123,12 @@ def addmeal(request):
 	order = Order.objects.filter(pk = oid)[0]
 	if ((Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order).count()) > 0):
 		print "ALREADY HERE\n"
-		meal = Meal.objects.filter(name = mealName, count__gte = 1)[0]
+		meal = Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order)[0]
 		meal.count = meal.count + int(count);
 		print "NEW COUNT" 
 		print meal.count
 		meal.save()
-		return HttpResponse(Meal.objects.filter(name = mealName, count__gte = 1)[0].id) 
+		return HttpResponse(Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order)[0].id) 
 	mealPrice = Meal.objects.filter(name = mealName)[0].price
 	print "MEAL PRICE"
 	print mealPrice
