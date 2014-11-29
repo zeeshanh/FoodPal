@@ -47,7 +47,6 @@ def logoutv(request):
 	logout(request)
 	return redirect('index')
 	
-@login_required(login_url='/Food/login/')
 def register_user(request):
 	if request.method == 'POST':
 		form = UserCreationForm(request.POST)
