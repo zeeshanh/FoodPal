@@ -3,7 +3,7 @@
 http://img2.wikia.nocookie.net/__cb20131204233125/whatever-you-want/images/e/e0/Hd-food-wallpaperswallpapers-foods-pizza-food-hd-1920x1200-s8uotxhd.jpg
 */
 
-function youyuser() {
+function logoutuser() {
     location.href = "logoutv/"
 }
 
@@ -176,17 +176,37 @@ function viewAllOrders() {
 	
 }
 
+function showPeopleLimit(v) {
+	if (v == 0)
+		$("#PeopleLimit").fadeOut("fast")
+	else 
+		$("#PeopleLimit").fadeIn("fast")	
+
+}
 function addorder() {
     timelimit = $("#timelimitfield").val();
     mylocation = $("#locationselector").find(":selected").text();
     restaurant = $("#restaurantselector").find(":selected").text();
-	
+	var data;
 	if (isNaN(timelimit) || timelimit <= 0) {
 		alert("Enter an appropriate time limit.");
 		return
 	}	
-    data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit;
-	// var url = location.href.replace( '/#', '') + '/neworder/'
+    
+	// Delivery
+	if ($("input[name='orderType']:checked").val() == 1) {
+		data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit + "&peopleLimit=0";
+	}		
+	
+	// Dine Out
+	else {
+		peopleLimit = $("#peopleLimitField").val();
+		if (isNaN(peopleLimit) || peopleLimit <= 0) {
+			alert("Enter an appropriate people limit.");
+			return
+		}		
+		data = "restaurant=" + restaurant + "&location=" + mylocation + "&timelimit=" + timelimit + "&peopleLimit=" + peopleLimit;
+	}
     $.ajax({
         type: "GET",
 		url:  'neworder/',
@@ -440,77 +460,81 @@ function setTimer(i) {
     // alert($(".timerDivs").eq(i).next().html())
     // alert($(".timerDivs").eq(i).next().html().indexOf("On the way"))
     var elems = document.getElementsByClassName('timerDivs');
-    oidAndStatus = elems[i].id.split(",")
-    // If order is not open 
-    if (oidAndStatus[1] == "1" || oidAndStatus[1] == "0") {
-        $(".timerDivs").eq(i).html("")
-        return;
-    };
-    var aaa = parseInt(oidAndStatus[2])
-    secondsElapsed = parseInt(elems[i].innerHTML.split(', ')[0])
-    secondsLimit = parseInt(elems[i].innerHTML.split(', ')[1])*60
+	oidAndStatus = elems[i].id.split(",")
+	// If order is not open 
+	if (oidAndStatus[1] == "1" || oidAndStatus[1] == "0") {
+		$(".timerDivs").eq(i).html("")
+		return;
+	};
+	var aaa = parseInt(oidAndStatus[2])
+	secondsElapsed = parseInt(elems[i].innerHTML.split(', ')[0])
+	secondsLimit = parseInt(elems[i].innerHTML.split(', ')[1])*60
 
-    orderTime = parseInt(elems[i].innerHTML.split(', ')[elems[i].innerHTML.split(', ').length-1])
-    var count=secondsLimit-secondsElapsed
-    var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
-    function timer()
-    {
-      count=count-1;
+	orderTime = parseInt(elems[i].innerHTML.split(', ')[elems[i].innerHTML.split(', ').length-1])
+	var count=secondsLimit-secondsElapsed
+	var counter=setInterval(timer, 1000); //1000 will  run it every 1 second
+	function timer()
+	{
+	  count=count-1;
 
-      if (count <= 0)
-      {
+	  if (count <= 0)
+	  {
+		clearInterval(counter);
         if(aaa >0){
             $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Reminder! You are supposed to meet up with " + from_user + " to dine out now. Click to update and see who else is coming!</a></strong></p></div>");
             if (window.navigator && window.navigator.vibrate) {
                     navigator.vibrate(1000);
             }
             tone.play();
-            
-        }
-        clearInterval(counter);
-        elems[i].innerHTML = "On the way"
-        $("#orderArrivedD").show();     
-        
-        if (document.getElementById("deleteOrderDiv") != null)
-            document.getElementById("deleteOrderDiv").style.display = "none";
 
-        var a = $('#newMealRow').parent().parent().parent().parent().parent().parent().parent().prev().first().children().first().html()
-        var b = elems[i].innerHTML
-        if (document.getElementById("newMealRow") != null && a == b)
-            document.getElementById("newMealRow").style.display = "none";       
-        if (document.getElementById("leaveOrderButton") != null)
-            document.getElementById("leaveOrderButton").style.display = "none";             
-                
-        // AJAX CALL UPDATES STATUS 
-       $.ajax({ 
-            type: "GET",
-            url: "orderTimeUp/",
-            data: "oid=" + oidAndStatus[0],
-            success: function(data) {
-                // alert('status updated');
-            }
-        }); 
-         return;
-      }
-        var rmin = (Math.ceil(count/60)-1)
-        var rsec = count % 60
-        // alert((rsec+"").length) 
-        if ((rsec+"").length == 1)
-            rsec = "0"+rsec
-        if (rsec == 0) rmin += 1;
-        // alert(rmin)
-        // alert(oidAndStatus)
-        // alert(oidAndStatus[2])
-        if (aaa > 0)
-            var ts = "Leaving in " + rmin + ":" + rsec
-        else 
-            var ts = "Open for " + rmin + ":" + rsec
+            elems[i].innerHTML = "Completed"
+        }	
+		else 
+			elems[i].innerHTML = "On the way"
+		$("#orderArrivedD").show(); 	
+		
+		if (document.getElementById("deleteOrderDiv") != null)
+			document.getElementById("deleteOrderDiv").style.display = "none";
 
-        if (elems[i] != null)
-            elems[i].innerHTML = ts
-    }
-    timer();
-    
+		var a = $('#newMealRow').parent().parent().parent().parent().parent().parent().parent().prev().first().children().first().html()
+		var b = elems[i].innerHTML
+		if (document.getElementById("newMealRow") != null && a == b)
+			document.getElementById("newMealRow").style.display = "none";		
+		if (document.getElementById("leaveOrderButton") != null)
+			document.getElementById("leaveOrderButton").style.display = "none";				
+			
+			
+		// AJAX CALL UPDATES STATUS	
+	   $.ajax({ 
+			type: "GET",
+			url: "orderTimeUp/",
+			data: "oid=" + oidAndStatus[0],
+			success: function(data) {
+				// alert('status updated');
+			}
+		});	
+		 return;
+	  }
+		var rmin = (Math.ceil(count/60)-1)
+		var rsec = count % 60
+		// alert((rsec+"").length) 
+		if ((rsec+"").length == 1)
+			rsec = "0"+rsec
+		if (rsec == 0) rmin += 1;
+		// alert(rmin)
+		// alert(oidAndStatus)
+		// alert(oidAndStatus[2])
+		if (aaa > 0)
+			var ts = "Leaving in " + rmin + ":" + rsec
+		else 
+			var ts = "Open for " + rmin + ":" + rsec
+
+		if (elems[i] != null)
+			elems[i].innerHTML = ts
+	}
+	timer();
+	
+>>>>>>> f2fb42ef1107a36d6762a5aae624926e30098297
 }
 
 // $("#myorders1 > thead th:nth-child(0)").hide();

@@ -21,5 +21,12 @@ def humanize_timesince(date):
     delta = datetime.datetime.utcnow() - naive  
    
     return ungettext(u"%d", u"%d",  delta.total_seconds()) %  delta.total_seconds()
-
+	
+@register.filter
+def canJoin(value, arg):
+	if value < arg:
+		return 0
+	else:
+		return 1
+	
  
