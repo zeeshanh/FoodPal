@@ -41,7 +41,16 @@ class Meal(models.Model):
 	def __unicode__(self):
 		return self.name
  
+ #status 
+ #1: orderArrived
+ #2: joinedOrder
+ #3: mealAdded
+ #4: new order created
+ #-3:left order
+ #-2: order cancelled
+ #-4: removed meal
 class Notification(models.Model):
 	user = models.ForeignKey(User, unique = False)
 	status = models.IntegerField(default =0)
+	from_user = models.CharField(max_length = 200)
 

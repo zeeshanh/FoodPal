@@ -12,17 +12,38 @@ function hasOrderArrived(){
         url: "/Food/hasOrderArrived",
         success: function(data) {
 
-            if (data >= 1){
-				// alert(data) 
-				constructID =data+",-1"
+            console.log(data)
+            data = data.split(",")
+            status = data[0]
+            from_user = data[1]
+
+            oid = 0
+            if(data.length > 2){
+                oid = parseInt(data[2])
+            }
+            
+            if (oid >1){
+				constructID =oid+",-1"
 				var x=document.getElementById(constructID);
 				x.innerHTML = "Arrived"
 				// alert(constructID)
 				// alert($(constructID).html()	)
 				// alert($(constructID).next().html()	)
-				// $(constructID).next().html()			
+				// $(constructID).next().html()	
+            }	
+            
+
+            /*status 
+            #1: orderArrived
+            #2: joinedOrder
+            #3: mealAdded
+            #4: new order created
+            #-3:left order
+            #-2: order cancelled
+            #-4: removed meal*/
 			
-                $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
+            if(status == "1"){
+                $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>Your order has arived!</strong></p></div>");
                 var tone = document.getElementById("tone"); 
                 tone.play();
 				if (document.getElementById("leaveOrderButton") != null)
@@ -33,12 +54,36 @@ function hasOrderArrived(){
                 } else {
                     console.log("Cant vibrate");
                 }
-
             }
 
-            else if (data == -2){
+            else if (status == "-2"){
                 console.log("Order cancelled")
-                $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has been cancelled by its creator!</strong></p></div>");
+                $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>Your order has been cancelled by its creator!</strong></p></div>");
+            }
+
+            else if (status == "4"){
+                console.log("Order created");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>A new order has been created by " + from_user + "!</strong></p></div>");
+            }
+
+            else if (status == "2"){
+                console.log("Joined order");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>" + from_user + " just joined your order! "+ "</strong></p></div>");
+            }
+
+            else if (status == "3"){
+                console.log("Joined order");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>A new meal has been added by " + from_user + " to your order! "+ "</strong></p></div>");
+            }
+
+            else if (status == "-3"){
+                console.log("Joined order");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>" + from_user + " just left your order!"+ "</strong></p></div>");
+            }
+
+            else if (status == "-4"){
+                console.log("Joined order");
+                 $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>A meal has been removed from your order</strong></p></div>");
             }
         }
     });
@@ -251,7 +296,6 @@ $(document).ready(function() {
 	}
 
     setInterval(hasOrderArrived, 3000);
-    hasOrderArrived();
 	
 	 $('.myorders1 th:nth-child(' + 5 + '), #myorders1 td:nth-child(' + 5 + ')').hide();
 	
