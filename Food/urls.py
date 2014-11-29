@@ -18,6 +18,7 @@ urlpatterns = patterns('',
 	url(r'^leaveOrder/$', views.leaveOrder, name='leaveOrder'),
 	url(r'^deleteOrder/$', views.deleteOrder, name='deleteOrder'),
 	url(r'^orderTimeUp/$', views.orderTimeUp, name='orderTimeUp'),
+	url(r'^isPartOfOrder/$', views.isPartOfOrder, name='isPartOfOrder'),
 )
 
 # Authentication views

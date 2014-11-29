@@ -305,3 +305,16 @@ def orderTimeUp(request):
 		order.status = 0
 	order.save()
 	return HttpResponse(1)
+
+def isPartOfOrder(request):
+	oid = request.GET['oid']
+	order = Order.objects.filter(pk = oid)[0]
+	username = request.GET['username']
+	if order.creator.username == username:
+		return HttpResponse(1);
+	else:
+		people = order.people_joined.all()
+		for person in people:
+			if person.username == username:
+				return HttpResponse(1)
+	return HttpResponse(-1)
