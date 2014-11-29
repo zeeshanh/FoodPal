@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-# Create your models here.
+
 class Restaurant(models.Model):
 	name = models.CharField(max_length=200)
 	webpage = models.CharField(max_length=200,null=True)

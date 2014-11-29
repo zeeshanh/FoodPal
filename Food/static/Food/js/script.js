@@ -3,18 +3,16 @@
 http://img2.wikia.nocookie.net/__cb20131204233125/whatever-you-want/images/e/e0/Hd-food-wallpaperswallpapers-foods-pizza-food-hd-1920x1200-s8uotxhd.jpg
 */
 
-function logoutuser() {
+function youyuser() {
     location.href = "logoutv/"
 }
 
 function hasOrderArrived(){
-    console.log("function start");
+
     $.ajax({
         type: "GET",
         url: "hasOrderArrived/",
         success: function(data) {
-
-            console.log(data)
             data = data.split(",")
             status = data[0]
             from_user = data[1]
@@ -33,11 +31,11 @@ function hasOrderArrived(){
             #-3:left order
             #-2: order cancelled
             #-4: removed meal*/
+            var tone = document.getElementById("tone"); 
 			
             if(status == "1"){
                 $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' >×</a><p><strong>Your order has arived!</strong></p></div>");
-                var tone = document.getElementById("tone"); 
-                tone.play();
+               
 				if (document.getElementById("leaveOrderButton") != null)
 					document.getElementById("leaveOrderButton").style.display = "none";				
                 if (window.navigator && window.navigator.vibrate) {
@@ -47,43 +45,57 @@ function hasOrderArrived(){
                 }
             }
             else if (status == "-2"){
-                console.log("Order cancelled")
-               $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Your order has been cancelled by its creator!</a></strong></p></div>");
+                $(".alerts").html("<div class='alert-message error'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>Your order has been cancelled by its creator!</a></strong></p></div>");
+                if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+                }
+                tone.play();
             }
 
             else if (status == "4"){
-                console.log("Order created");
                  $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>A new order has been created by " + from_user + ".Click to update orders!</a></strong></p></div>");
+                 if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+                }
+                tone.play();
             }
 
             else if (status == "2"){
-                console.log("Joined order");
                  $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>" + from_user + " just joined your order. Click to refresh!</a></strong></p></div>");
+                 if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+                }
+                tone.play();
             }
 
             else if (status == "3"){
-                console.log("Joined order");
                  $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>A new meal has been added by " + from_user + " to your order. Click to refresh!"+ "</a></strong></p></div>");
+                 if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+                }
+                tone.play();
             }
 
             else if (status == "-3"){
-                console.log("Joined order");
                  $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>" + from_user + " just left your order."+ "Click to refresh!</a></strong></p></div>");
+                 if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+                }
+                tone.play();
             }
 
             else if (status == "-4"){
-                console.log("Joined order");
                  $(".alerts").html("<div class='alert-message info'><a class='close' onclick = 'removeNotification()' >×</a><p><strong><a href = ''>A meal has been removed from your order. Click to refresh!</a></strong></p></div>");
+                 if (window.navigator && window.navigator.vibrate) {
+                    navigator.vibrate(1000);
+                }
+                tone.play();
             }
 
             if (oid >1){
                 constructID =oid+",-1"
                 var x=document.getElementById(constructID);
-                x.innerHTML = "Arrived"
-                // alert(constructID)
-                // alert($(constructID).html()  )
-                // alert($(constructID).next().html()   )
-                // $(constructID).next().html() 
+                x.innerHTML = "Arrived";
             }   
         }
     });
@@ -503,7 +515,6 @@ function createRestaurant() {
 	}	
     restaurantWebsite = $("#createRestaurantSiteBox").val();
 	var data;
-	alert(restaurantWebsite)
 	if (restaurantWebsite=="") {
 		data = "restaurant=" + restaurant + "&restaurantWebsite=0"
 	} else {
@@ -587,11 +598,9 @@ function joinOrder(oid) {
         data: "oid=" + oid,
         success: function(data) {
 			if (data == -1)
-				window.location.reload();
-			else if (data == 1)
-				alert("To join this order, please cancel yours first.");
+				alert('You are already part of another order!')
 			else 
-				alert("To join this order, please leave " + data + "'s order first.");
+				window.location.reload();
         }
     });		
 }	
