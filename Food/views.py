@@ -183,15 +183,22 @@ def joinOrder(request):
 	return redirect('index')
 
 def hasOrderArrived(request):
+    print("ASDASDDA")
     sUser = User.objects.filter(username = request.user.username)[0]
-    print sUser
+    order = Order.objects.filter(people_joined__username__contains = sUser.username).order_by('-date_created')
+    
+
+    # print sUser
     notifications = Notification.objects.filter(user = sUser)
     if len(notifications) == 0:
     	return HttpResponse(-1);
     else:
     	status = notifications[0].status
     	notifications[0].delete()
-    	return HttpResponse(status)
+    	numberToSend = status
+    	if (order.count()>0):
+            numberToSend = order[0].id
+    	return HttpResponse(numberToSend)
 		
 #delete all meals
 def leaveOrder(request):
@@ -236,4 +243,11 @@ def orderArrived(request):
 		if person != order.creator:
 			n = Notification(user = person, status = order.status)
 			n.save()
+	return HttpResponse(1)
+	
+def orderTimeUp(request):
+	oid = request.GET['oid']
+	order = Order.objects.filter(pk = oid)[0]
+	order.status = 0
+	order.save()
 	return HttpResponse(1)

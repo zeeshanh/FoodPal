@@ -11,7 +11,17 @@ function hasOrderArrived(){
         type: "GET",
         url: "/Food/hasOrderArrived",
         success: function(data) {
-            if (data == 1){
+
+            if (data >= 1){
+				// alert(data) 
+				constructID =data+",-1"
+				var x=document.getElementById(constructID);
+				x.innerHTML = "Arrived"
+				// alert(constructID)
+				// alert($(constructID).html()	)
+				// alert($(constructID).next().html()	)
+				// $(constructID).next().html()			
+			
                 $(".alerts").html("<div class='alert-message success'><a class='close' onclick = 'removeNotification()' href='#'>×</a><p><strong>Your order has arived!</strong></p></div>");
                 var tone = document.getElementById("tone"); 
                 tone.play();
@@ -168,7 +178,7 @@ function deleteOrder(v, oid) {
         url: "/Food/deleteOrder/",
         data: "oid=" + oid,
         success: function(data) {
-			jQuery(v).closest(".orderrowclass")[0].remove()
+			document.getElementById(oid).style.display = "none";
 		}  
     });
 
@@ -179,8 +189,8 @@ $(document).ready(function() {
 
     document.getElementById("neworderform").style.display = "none";
     document.getElementById("ordertable").style.display = "none";
-	if (document.getElementById("orderArrivedD") != null)
-		document.getElementById("orderArrivedD").style.display = "none";
+	// if (document.getElementById("orderArrivedD") != null)
+		// document.getElementById("orderArrivedD").style.display = "none";
 		document.getElementById("myorders").style.display = "none";
 	if (document.getElementById("createMealForm") != null)
 		document.getElementById("createMealForm").style.display = "none";
@@ -240,7 +250,7 @@ $(document).ready(function() {
 		setTimer(i)
 	}
 
-    setInterval(hasOrderArrived, 30000);
+    setInterval(hasOrderArrived, 3000);
     hasOrderArrived();
 	
 	 $('.myorders1 th:nth-child(' + 5 + '), #myorders1 td:nth-child(' + 5 + ')').hide();
@@ -425,16 +435,13 @@ function setTimer(i) {
     // alert($(".timerDivs").eq(i).next().html())
     // alert($(".timerDivs").eq(i).next().html().indexOf("On the way"))
     var elems = document.getElementsByClassName('timerDivs');
-
-    if ($(".timerDivs").eq(i).next().html().indexOf("On the way") > -1) {
-		// alert('asd');
+	oidAndStatus = elems[i].id.split(",")
+	// If order is not open 
+	if (oidAndStatus[1] == "1" || oidAndStatus[1] == "0") {
 		$(".timerDivs").eq(i).html("")
 		return;
 	};
-    if ($(".timerDivs").eq(i).next().html().indexOf("Arrived") > -1) {
-		$(".timerDivs").eq(i).html("")
-		return;
-	};	
+
 
 	// alert(elems[i].innerHTML);
 	var length = elems[i].innerHTML.split(', ').length
@@ -460,14 +467,9 @@ function setTimer(i) {
 
 	  if (count <= 0)
 	  {
-		// alert(elems[i].innerHTML)
 		clearInterval(counter);
 		elems[i].innerHTML = "On the way"
-		$("#orderArrivedD").show(); 
-		// if (
-		// alert($(".timerDivs").eq(i))
-		// alert($(".timerDivs").eq(i).closest("#newMealRow").length)
-		
+		$("#orderArrivedD").show(); 	
 		
 		if (document.getElementById("deleteOrderDiv") != null)
 			document.getElementById("deleteOrderDiv").style.display = "none";
@@ -481,21 +483,15 @@ function setTimer(i) {
 			document.getElementById("leaveOrderButton").style.display = "none";				
 				
 
-		
-		
-		// AJAX CALL UPDATES STATUS	
-	   // $.ajax({
-			// type: "GET",
-			// url: "/Food/orderTimeUp/",
-			// data: "oid=" + oid,
-			// success: function(data) {
-				// if (data == -1)
-					// alert('???')
-				// else 
-					// window.location.reload();
-
-			// }
-		// });
+		// AJAX CALL UPDATES STATUS	!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	   $.ajax({
+			type: "GET",
+			url: "/Food/orderTimeUp/",
+			data: "oid=" + oidAndStatus[0],
+			success: function(data) {
+				alert('status updated');
+			}
+		});
 
 		
 		 return;
