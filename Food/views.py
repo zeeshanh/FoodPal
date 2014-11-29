@@ -145,6 +145,9 @@ def addmeal(request):
 		print "NEW COUNT" 
 		print meal.count
 		meal.save()
+		if order.creator.username!= sUser.username:
+			n = Notification(user = order.creator, status=3, from_user=sUser.username)
+			n.save()		
 		return HttpResponse(Meal.objects.filter(name = mealName, count__gte = 1, owner = sUser, order = order)[0].id) 
 	mealPrice = Meal.objects.filter(name = mealName)[0].price
 	print "MEAL PRICE"
