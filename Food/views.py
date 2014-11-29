@@ -134,23 +134,25 @@ def addmeal(request):
 	print mealPrice
 	newM = Meal(name = mealName, count = int(count), price = mealPrice, restaurant = order.restaurant, order = order, owner = sUser) 
 	newM.save()
-	n = Notification(user = order.creator, status=3, from_user=sUser.username)
-	n.save()
+	if order.creator.username!= suSer.username:
+		n = Notification(user = order.creator, status=3, from_user=sUser.username)
+		n.save()
 	print newM.id
 	return HttpResponse(newM.id) 	
   		
 def removeMeal(request):
 	mID = request.GET['mealID']
 	m = Meal.objects.filter(id = mID)[0]
+	order = m.order
+	creator = order.creator
 	if m.owner != request.user:
 		return HttpResponse("Bad request!")
 	elif m.order.status != -1:
 		return HttpResponse("Bad request!")
-	order = m.order
-	creator = order.creator
 	m.delete()
-	n = Notification(user = creator, status = -4, from_user = "")
-	n.save()
+	if order.creator.username!= suSer.username:
+		n = Notification(user = creator, status = -4, from_user = "")
+		n.save()
 	return HttpResponse(1)
 
 def createNewMeal(request):
@@ -226,7 +228,7 @@ def hasOrderArrived(request):
     	if (order.count()>0):
             response = response + "," + str(order[0].id)
     	return HttpResponse(response)
-		
+
 #delete all meals
 def leaveOrder(request):
 	oid = request.GET['oid']
